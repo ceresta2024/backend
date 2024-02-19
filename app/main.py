@@ -1,10 +1,18 @@
 # main.py
 
 from fastapi import FastAPI
+from app.config import settings
 from app.routes import user
+from celery import Celery
 
 
 app = FastAPI()
+
+celery = Celery(
+    __name__,
+    broker=settings.CELERY_BROKER_URL,
+    backend=settings.CELERY_RESULT_BACKEND
+)
 
 # Include your API routers
 app.include_router(user.router, prefix="/users", tags=["users"])
