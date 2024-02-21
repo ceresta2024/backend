@@ -7,8 +7,10 @@ from app.routes import user
 
 app = FastAPI()
 
-# Include your API routers
-app.include_router(user.router, prefix="/users", tags=["users"])
+# Include specific API routers
+app.include_router(user.router, prefix="/user", tags=["user"])
+app.include_router(user.router, prefix="/maze", tags=["maze"])
+app.include_router(user.router, prefix="/shop", tags=["shop"])
 
 
 # Root endpoint
