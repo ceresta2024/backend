@@ -3,36 +3,29 @@ from fastapi import APIRouter
 from app.models import User
 
 router = APIRouter()
-namespace = "user"
+namespace = "shop"
 
 
-@router.post("/login/")
-async def login():
+@router.get("/get_store_list/")
+async def get_store_list():
     # Implement user creation logic here
     return {"message": "Test user router"}
 
 
-@router.post("/register/")
-async def register():
+@router.get("/get_inventory_list/")
+async def get_inventory_list():
     # Implement user creation logic here
     return {"message": "Test user router"}
 
 
-@router.post("/change_account/")
-async def change_account():
+@router.get("/sell_item/")
+async def sell_item():
     # Implement user creation logic here
     return {"message": "Test user router"}
 
 
-@router.post("/change_password/")
-async def change_password():
+@router.get("/buy_item/")
+async def buy_item():
     # Implement user creation logic here
     return {"message": "Test user router"}
-
-
-@router.get("/get_nickname/")
-async def get_nickname():
-    # Implement user creation logic here
-    return {"message": "Test user router"}
-
 

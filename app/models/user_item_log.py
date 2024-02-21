@@ -18,3 +18,6 @@ class UserItemLog(Base):
     # Item relationship
     item_id: str = Column(Integer, ForeignKey("item.id"))
     item = orm.relationship("Package")
+
+    created = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated = Column(DateTime, default=datetime.utcnow, nullable=False)
