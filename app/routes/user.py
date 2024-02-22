@@ -34,5 +34,3 @@ async def change_password():
 async def get_nickname():
     # Implement user creation logic here
     return {"message": "Test user router"}
-
-

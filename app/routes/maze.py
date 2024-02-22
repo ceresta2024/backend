@@ -16,4 +16,3 @@ async def get_starttime():
 async def is_open():
     # Implement user creation logic here
     return {"message": "Test user router"}
-

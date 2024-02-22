@@ -28,4 +28,3 @@ async def sell_item():
 async def buy_item():
     # Implement user creation logic here
     return {"message": "Test user router"}
-
