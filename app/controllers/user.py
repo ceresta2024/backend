@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.models.user import User
 import app.schemas.user as schema
 
-from app.utils import errors, utils
+from app.utils.common import id_generator, create_access_token
 
 
 class UserController:
@@ -27,8 +27,8 @@ class UserController:
     def get_nickname(self) -> schema.NickToken:
         now = datetime.utcnow()
         str_time = now.strftime("%m%d%y%H%M%S")
-        uid = utils.id_generator()
+        uid = id_generator()
         nickname = f"{uid}_{str_time}"
-        token = utils.create_access_token({"username": nickname})
+        token = create_access_token({"username": nickname})
 
         return schema.NickToken(username=nickname, access_token=token)

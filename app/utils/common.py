@@ -7,7 +7,7 @@ from typing import Union, Any
 from jose import jwt
 
 from app.config import settings
-from app.const import (
+from app.utils.const import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     REFRESH_TOKEN_EXPIRE_MINUTES,
     ALGORITHM,
