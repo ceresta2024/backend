@@ -19,5 +19,10 @@ class Config:
         "CELERY_RESULT_BACKEND", "redis://127.0.0.1:6379/0"
     )
 
+    JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "narscbjim@$@&^@&%^&RFghgjvbdsha")
+    JWT_REFRESH_SECRET_KEY = os.environ.get(
+        "JWT_REFRESH_SECRET_KEY", "13ugfdfgh@#$%^@&jkl45678902"
+    )
+
 
 settings = Config()
