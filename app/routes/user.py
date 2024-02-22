@@ -1,6 +1,9 @@
 # routes/user.py
-from fastapi import APIRouter
-from app.models import User
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.controllers import UserController
+from app.models.base import obtain_session
 
 router = APIRouter()
 namespace = "user"
@@ -31,6 +34,5 @@ async def change_password():
 
 
 @router.get("/get_nickname/")
-async def get_nickname():
-    # Implement user creation logic here
-    return {"message": "Test user router"}
+async def get_nickname(session: Session = Depends(obtain_session)):
+    return UserController(session).get_nickname()

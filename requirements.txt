@@ -7,3 +7,5 @@ python-dotenv==1.0.1
 black==24.2.0
 redis==5.0.1
 celery==5.3.6
+passlib==1.7.4
+python-jose

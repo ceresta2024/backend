@@ -13,8 +13,12 @@ class RequestDetails(BaseModel):
     password: str
 
 
-class TokenSchema(BaseModel):
+class NickToken(BaseModel):
     username: str
+    access_token: str
+
+
+class TokenSchema(BaseModel):
     access_token: str
     refresh_token: str
 

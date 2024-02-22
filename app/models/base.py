@@ -9,3 +9,11 @@ engine = create_engine(settings.DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
+
+
+def obtain_session():
+    session = SessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()
