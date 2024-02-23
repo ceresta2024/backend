@@ -11,7 +11,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
-def obtain_session():
+def get_session():
     session = SessionLocal()
     try:
         yield session
