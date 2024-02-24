@@ -1,20 +1,21 @@
 import jwt
-from jwt.exceptions import InvalidKeyTypeError
+# from jwt.exceptions import InvalidKeyError
 from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
+from app.config import settings
 from app.utils.const import (
     ALGORITHM,
-    JWT_SECRET_KEY,
 )
 
 
 def decodeJWT(jwtoken: str):
     try:
         # Decode and verify the token
-        payload = jwt.decode(jwtoken, JWT_SECRET_KEY, ALGORITHM)
+        payload = jwt.decode(jwtoken, settings.JWT_SECRET_KEY, ALGORITHM)
         return payload
-    except InvalidKeyTypeError:
+    except Exception as e:
+        print("Exception during decodeJWT e: ", e)
         return None
 
 

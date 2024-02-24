@@ -3,7 +3,8 @@ from datetime import datetime
 from sqlalchemy import Column, DateTime, Integer, ForeignKey, orm
 
 from .base import Base
-
+from .user import User
+from .item import Item
 
 class UserItemLog(Base):
     __tablename__ = "user_item_log"
@@ -13,11 +14,11 @@ class UserItemLog(Base):
 
     # User relationship
     user_id: str = Column(Integer, ForeignKey("user.id"))
-    user = orm.relationship("Package")
+    user = orm.relationship("User")
 
     # Item relationship
     item_id: str = Column(Integer, ForeignKey("item.id"))
-    item = orm.relationship("Package")
+    item = orm.relationship("Item")
 
     created = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated = Column(DateTime, default=datetime.utcnow, nullable=False)
