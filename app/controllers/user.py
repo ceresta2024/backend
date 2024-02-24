@@ -31,7 +31,7 @@ class UserController:
 
         encrypted_password =get_hashed_password(user.password)
 
-        new_user = User(username=user.username, email=user.email, password=encrypted_password )
+        new_user = User(user_name=user.username, email=user.email, password=encrypted_password )
 
         self.session.add(new_user)
         self.session.commit()
@@ -50,7 +50,7 @@ class UserController:
                 detail="Incorrect password"
             )
 
-        access=create_access_token(user.id)
+        access = create_access_token(user.id)
         refresh = create_refresh_token(user.id)
 
         token_db = TokenTable(user_id=user.id,  access_toke=access,  refresh_toke=refresh, status=True)
@@ -121,5 +121,5 @@ class UserController:
 
         return NickToken(username=nickname, access_token=token)
 
-    def get_users(self, email: str) -> bool:
+    def get_users(self) -> bool:
         return self.session.query(User).all()
