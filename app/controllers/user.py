@@ -121,5 +121,5 @@ class UserController:
 
         return NickToken(username=nickname, access_token=token)
 
-    def get_users(self) -> bool:
+    def get_users(self) -> list[User]:
         return self.session.query(User).all()
