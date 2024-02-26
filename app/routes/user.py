@@ -17,16 +17,16 @@ namespace = "user"
 def token_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        token = kwargs['dependencies']
-        session = kwargs['session']
+        token = kwargs["dependencies"]
+        session = kwargs["session"]
 
         payload = decodeJWT(token)
-        user_id = payload['sub']
+        user_id = payload["sub"]
         data = UserController(session).token_required(token, user_id)
         if data:
             return func(token, session)
         else:
-            return {'msg': "Token blocked"}
+            return {"msg": "Token blocked"}
 
     return wrapper
 
@@ -36,22 +36,24 @@ async def register(user: UserCreate, session: Session = Depends(get_session)):
     return UserController(session).register(user)
 
 
-@router.post("/login/",  response_model=TokenSchema)
+@router.post("/login/", response_model=TokenSchema)
 async def login(request: RequestDetails, session: Session = Depends(get_session)):
     return UserController(session).login(request)
 
 
-@router.post('/logout')
-def logout(dependencies = Depends(JWTBearer()), session: Session = Depends(get_session)):
+@router.post("/logout")
+def logout(dependencies=Depends(JWTBearer()), session: Session = Depends(get_session)):
     token = dependencies
     payload = decodeJWT(token)
-    user_id = payload['sub']
+    user_id = payload["sub"]
 
     return UserController(Session).logout(token, user_id)
 
 
-@router.get('/getusers')
-def getusers(dependencies = Depends(JWTBearer()), session: Session = Depends(get_session)):
+@router.get("/getusers")
+def getusers(
+    dependencies=Depends(JWTBearer()), session: Session = Depends(get_session)
+):
     return UserController(session).get_users()
 
 
@@ -61,7 +63,9 @@ async def change_account(session: Session = Depends(get_session)):
 
 
 @router.post("/change_password/")
-async def change_password(request: ChangePassword, session: Session = Depends(get_session)):
+async def change_password(
+    request: ChangePassword, session: Session = Depends(get_session)
+):
     return UserController(session).change_password(request)
 
 

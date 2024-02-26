@@ -6,6 +6,7 @@ from .base import Base
 from .user import User
 from .item import Item
 
+
 class UserItemLog(Base):
     __tablename__ = "user_item_log"
 

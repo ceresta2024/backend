@@ -40,5 +40,7 @@ async def buy_item(session: Session = Depends(get_session)):
 
 
 @router.get("/get_items/")
-async def get_items(dependencies = Depends(JWTBearer()), session: Session = Depends(get_session)):
+async def get_items(
+    dependencies=Depends(JWTBearer()), session: Session = Depends(get_session)
+):
     return ShopController(session).get_items()
