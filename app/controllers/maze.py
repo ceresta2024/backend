@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 
+from app.schemas.maze import MapData
 from app.utils.gamemap import generate_map
+from app.utils.const import MAP_WIDTH, MAP_HEIGHT
 
 
 class MazeController:
@@ -10,4 +12,4 @@ class MazeController:
     def get_map_data(self) -> list:
         data = generate_map()
 
-        return data
+        return MapData(width=MAP_WIDTH, height=MAP_HEIGHT, data=data)
