@@ -1,6 +1,6 @@
 import unittest
 
-from app.utils.map import generate_map
+from app.utils.gamemap import generate_map
 
 
 class TestBoardService(unittest.TestCase):
