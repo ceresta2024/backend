@@ -58,7 +58,7 @@ class UserController:
         refresh = create_refresh_token(user.id)
 
         token_db = TokenTable(
-            user_id=user.id, access_toke=access, refresh_toke=refresh, status=True
+            user_id=user.id, access_token=access, refresh_token=refresh, status=True
         )
         self.session.add(token_db)
         self.session.commit()
@@ -85,7 +85,7 @@ class UserController:
 
         existing_token = (
             self.session.query(TokenTable)
-            .filter(TokenTable.user_id == user_id, TokenTable.access_toke == token)
+            .filter(TokenTable.user_id == user_id, TokenTable.access_token == token)
             .first()
         )
         if existing_token:
