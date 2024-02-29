@@ -97,6 +97,11 @@ class UserController:
         return {"message": "Logout Successfully"}
 
     def change_password(self, request: ChangePassword):
+        if request.old_password == request.new_password:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Not allowed same new password"
+            )
+
         user = self.session.query(User).filter(User.email == request.email).first()
         if user is None:
             raise HTTPException(

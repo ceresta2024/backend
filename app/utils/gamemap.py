@@ -2,6 +2,17 @@ from app.utils import const
 from app.utils.map.map_generator import get_gmap_array
 from app.utils.map.map_entities import GameMapSettings
 
+from datetime import datetime, timedelta
+
+def get_game_launch_time():
+    now = datetime.now()
+    # print(now.year, now.month, now.day, now.hour, now.minute, now.second)
+    next_hour = (now.hour // const.GAME_LAUNCH_PERIOD + 1) * const.GAME_LAUNCH_PERIOD
+    diff_hour = next_hour - now.hour
+    normal_now = now.replace(minute=0, second=0, microsecond=0)
+    launch_time = normal_now + timedelta(hours=diff_hour)
+    return launch_time.strftime('%Y-%m-%d %H:%M:%S')
+
 
 def init_map_settings(map_settings):
     map_width = const.MAP_WIDTH

@@ -64,7 +64,9 @@ async def change_account(session: Session = Depends(get_session)):
 
 @router.post("/change_password/")
 async def change_password(
-    request: ChangePassword, session: Session = Depends(get_session)
+    request: ChangePassword,
+    dependencies=Depends(JWTBearer()),
+    session: Session = Depends(get_session)
 ):
     return UserController(session).change_password(request)
 
