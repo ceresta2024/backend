@@ -14,7 +14,6 @@ namespace = "maze"
 
 @router.get("/get_starttime/")
 async def get_starttime(session: Session = Depends(get_session)):
-    # Implement user creation logic here
     return MazeController(session).get_launch_time()
 
 

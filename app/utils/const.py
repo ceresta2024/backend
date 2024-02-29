@@ -3,7 +3,7 @@ REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 ALGORITHM = "HS256"
 
 # Game
-GAME_LAUNCH_PERIOD = 2  # 2 hours
+GAME_LAUNCH_PERIOD = 2  # Every 2 hours
 
 # map
 MAP_WIDTH = 100

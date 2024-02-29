@@ -19,12 +19,14 @@ class UserController:
     def __init__(self, session: Session) -> None:
         self.session = session
 
+
     def token_required(self, token: str, user_id: int):
         return (
             self.session.query(TokenTable)
             .filter_by(user_id=user_id, access_toke=token, status=True)
             .first()
         )
+
 
     def register(self, user: UserCreate):
         existing_user = self.session.query(User).filter_by(email=user.email).first()
@@ -41,6 +43,7 @@ class UserController:
         self.session.commit()
         self.session.refresh(new_user)
         return {"message": "user created successfully"}
+
 
     def login(self, request: RequestDetails):
         user = self.session.query(User).filter(User.email == request.email).first()
@@ -67,6 +70,7 @@ class UserController:
             "access_token": access,
             "refresh_token": refresh,
         }
+
 
     def logout(self, token: str, user_id: int):
         token_record = self.session.query(TokenTable).all()
@@ -96,6 +100,7 @@ class UserController:
 
         return {"message": "Logout Successfully"}
 
+
     def change_password(self, request: ChangePassword):
         if request.old_password == request.new_password:
             raise HTTPException(
@@ -119,18 +124,22 @@ class UserController:
 
         return {"message": "Password changed successfully"}
 
+
     def verify_email(self, email: str) -> bool:
         if self.session.query(User).filter_by(email=email).first():
             return True
         return False
+
 
     def verify_username(self, username: str) -> bool:
         if self.session.query(User).filter_by(username=username).first():
             return True
         return False
 
+
     def get_user_detail(self, username: str) -> User:
         return self.session.query(User).filter_by(username=username).first()
+
 
     def get_nickname(self) -> NickToken:
         now = datetime.utcnow()
@@ -141,5 +150,7 @@ class UserController:
 
         return NickToken(username=nickname, access_token=token)
 
+
     def get_users(self) -> list[User]:
         return self.session.query(User).all()
+
