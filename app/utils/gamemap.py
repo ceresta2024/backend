@@ -11,7 +11,7 @@ def get_game_launch_time():
     diff_hour = next_hour - now.hour
     normal_now = now.replace(minute=0, second=0, microsecond=0)
     launch_time = normal_now + timedelta(hours=diff_hour)
-    return launch_time.strftime('%Y-%m-%d %H:%M:%S')
+    return launch_time.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def init_map_settings(map_settings):

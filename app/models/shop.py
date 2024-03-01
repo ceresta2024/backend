@@ -10,7 +10,7 @@ class Shop(Base):
     __tablename__ = "shop"
 
     id = Column(Integer, primary_key=True, index=True)
-    
+
     item_id: int = Column(Integer, ForeignKey("item.id"))
     item = orm.relationship("Item")
 

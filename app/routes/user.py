@@ -66,7 +66,7 @@ async def change_account(session: Session = Depends(get_session)):
 async def change_password(
     request: ChangePassword,
     dependencies=Depends(JWTBearer()),
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
 ):
     return UserController(session).change_password(request)
 

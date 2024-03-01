@@ -21,16 +21,13 @@ class MazeController:
     def __init__(self, session: Session) -> None:
         self.session = session
 
-
     def get_launch_time(self) -> str:
         return get_game_launch_time()
-
 
     def get_map_data(self) -> list:
         data = generate_map()
 
         return MapData(width=MAP_WIDTH, height=MAP_HEIGHT, data=data)
-
 
     def get_reward(self, reward: RewardRequest) -> RewardResponse:
         is_nickname = False
@@ -49,33 +46,32 @@ class MazeController:
             is_nickname = True
 
         # Get item randomly
-        item = self.session.query(Item).filter_by(type=reward.box_type).order_by(func.random()).first()
+        item = (
+            self.session.query(Item)
+            .filter_by(type=reward.box_type)
+            .order_by(func.random())
+            .first()
+        )
         if not item:
             raise HTTPException(status_code=401, detail="Not Found items")
 
-        if is_nickname:  # Return reward info without logging in useritemlog and inventory for nicknam user
-            return RewardResponse(
-                id=item.id,
-                name=item.name,
-                price=item.price
-            )
+        if (
+            is_nickname
+        ):  # Return reward info without logging in useritemlog and inventory for nicknam user
+            return RewardResponse(id=item.id, name=item.name, price=item.price)
 
         # Add log in useritemlog
-        new_log = UserItemLog(
-            user_id=token.user_id, item_id=item.id
-        )
+        new_log = UserItemLog(user_id=token.user_id, item_id=item.id)
         self.session.add(new_log)
         self.session.commit()
         self.session.refresh(new_log)
 
         # Update inventory with new item
-        inven = self.session.query(Inventory).filter(Inventory.item_id == item.id).first()
+        inven = (
+            self.session.query(Inventory).filter(Inventory.item_id == item.id).first()
+        )
         if inven is None:
-            new_inven = Inventory(
-                user_id=token.user_id,
-                item_id=item.id,
-                quantity=1
-            )
+            new_inven = Inventory(user_id=token.user_id, item_id=item.id, quantity=1)
             self.session.add(new_inven)
             self.session.commit()
             self.session.refresh(new_inven)
@@ -83,9 +79,4 @@ class MazeController:
             inven.quantity += 1
             self.session.commit()
 
-        return RewardResponse(
-            id=item.id,
-            name=item.name,
-            price=item.price
-        )
-
+        return RewardResponse(id=item.id, name=item.name, price=item.price)

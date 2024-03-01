@@ -17,4 +17,3 @@ class RewardResponse(BaseModel):
     id: int
     name: str
     price: int
-

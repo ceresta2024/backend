@@ -32,7 +32,6 @@ async def get_map_data(session: Session = Depends(get_session)):
 async def get_reward(
     reward: RewardRequest,
     # dependencies=Depends(JWTBearer()),
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
 ):
     return MazeController(session).get_reward(reward)
-
