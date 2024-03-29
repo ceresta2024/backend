@@ -27,7 +27,9 @@ class UserController:
         )
 
     def register(self, user: UserCreate):
-        existing_user = self.session.query(User).filter_by(user_name=user.username).first()
+        existing_user = (
+            self.session.query(User).filter_by(user_name=user.username).first()
+        )
         if existing_user:
             raise HTTPException(status_code=400, detail="User name already registered")
         existing_user = self.session.query(User).filter_by(email=user.email).first()

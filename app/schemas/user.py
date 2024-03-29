@@ -11,14 +11,14 @@ class UserCreate(BaseModel):
     @classmethod
     def validate_password(cls, value):
         min_length = 8
-        errors = ''
+        errors = ""
         if len(value) < min_length:
-            errors += 'Password must be at least 8 characters long. '
+            errors += "Password must be at least 8 characters long. "
         if not any(character.islower() for character in value):
-            errors += 'Password should contain at least one lowercase character.'
+            errors += "Password should contain at least one lowercase character."
         if errors:
             raise ValueError(errors)
-            
+
         return value
 
 
