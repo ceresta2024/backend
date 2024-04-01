@@ -149,3 +149,14 @@ class UserController:
 
     def get_users(self) -> list[User]:
         return self.session.query(User).all()
+
+    def get_money(self, user_id: int):
+        user = self.session.query(User).filter(User.id == user_id).first()
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect token"
+            )
+        game_money = 0 if user.game_money is None else user.game_money
+        return {
+            "gold": game_money,
+        }
