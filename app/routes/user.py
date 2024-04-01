@@ -74,3 +74,16 @@ async def change_password(
 @router.get("/get_nickname/")
 async def get_nickname(session: Session = Depends(get_session)):
     return UserController(session).get_nickname()
+
+
+@router.get("/get_gold/")
+async def get_nickname(
+    dependencies=Depends(JWTBearer()),
+    session: Session = Depends(get_session)
+):
+    token = dependencies
+    payload = decodeJWT(token)
+    user_id = payload["sub"]
+
+    return UserController(session).get_money(user_id)
+
