@@ -10,6 +10,8 @@ from app.models.user import User
 from app.schemas.user import (
     UserCreate,
     TokenSchema,
+    LoginUserInfo,
+    UserInfo,
     RequestDetails,
     ChangePassword,
     SetJob,
@@ -42,7 +44,7 @@ async def register(user: UserCreate, session: Session = Depends(get_session)):
     return UserController(session).register(user)
 
 
-@router.post("/login/", response_model=TokenSchema)
+@router.post("/login/", response_model=LoginUserInfo)
 async def login(request: RequestDetails, session: Session = Depends(get_session)):
     return UserController(session).login(request)
 
@@ -53,7 +55,18 @@ def logout(dependencies=Depends(JWTBearer()), session: Session = Depends(get_ses
     payload = decodeJWT(token)
     user_id = payload["sub"]
 
-    return UserController(Session).logout(token, user_id)
+    return UserController(session).logout(token, user_id)
+
+
+@router.post("/getinfo", response_model=UserInfo)
+def get_user_info(
+    dependencies=Depends(JWTBearer()), session: Session = Depends(get_session)
+):
+    token = dependencies
+    payload = decodeJWT(token)
+    user_id = payload["sub"]
+
+    return UserController(session).get_info(user_id)
 
 
 @router.get("/getusers")
