@@ -43,6 +43,10 @@ class ChangePassword(BaseModel):
     new_password: str = Field(min_length=8)
 
 
+class SetJob(BaseModel):
+    job_id: int
+
+
 class TokenCreate(BaseModel):
     user_id: str
     access_token: str

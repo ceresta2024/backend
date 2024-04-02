@@ -3,9 +3,14 @@ from datetime import datetime
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.models.user import User, TokenTable
-from app.schemas.user import UserCreate, RequestDetails, NickToken, ChangePassword
-
+from app.models.user import User, TokenTable, Job
+from app.schemas.user import (
+    UserCreate,
+    RequestDetails,
+    NickToken,
+    ChangePassword,
+    SetJob,
+)
 from app.utils.common import (
     id_generator,
     create_access_token,
@@ -160,3 +165,24 @@ class UserController:
         return {
             "gold": game_money,
         }
+
+    def get_jobs(self):
+        return self.session.query(Job).all()
+
+    def set_job(self, request: SetJob, user_id: int):
+        job = self.session.query(Job).filter(Job.id == request.job_id).first()
+        if job is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Job not found"
+            )
+
+        user = self.session.query(User).filter(User.id == user_id).first()
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="User not found"
+            )
+
+        user.job_id = request.job_id
+        self.session.commit()
+
+        return {"message": "Set job successfully"}

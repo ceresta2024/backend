@@ -7,7 +7,13 @@ from app.controllers import UserController
 from app.models.base import get_session
 from app.models.user import User
 
-from app.schemas.user import UserCreate, TokenSchema, RequestDetails, ChangePassword
+from app.schemas.user import (
+    UserCreate,
+    TokenSchema,
+    RequestDetails,
+    ChangePassword,
+    SetJob,
+)
 from app.utils.auth_bearer import JWTBearer, decodeJWT
 
 router = APIRouter()
@@ -78,8 +84,7 @@ async def get_nickname(session: Session = Depends(get_session)):
 
 @router.get("/get_gold/")
 async def get_nickname(
-    dependencies=Depends(JWTBearer()),
-    session: Session = Depends(get_session)
+    dependencies=Depends(JWTBearer()), session: Session = Depends(get_session)
 ):
     token = dependencies
     payload = decodeJWT(token)
@@ -87,3 +92,23 @@ async def get_nickname(
 
     return UserController(session).get_money(user_id)
 
+
+### Job apis
+@router.get("/get_jobs/")
+async def get_jobs(
+    dependencies=Depends(JWTBearer()), session: Session = Depends(get_session)
+):
+    return UserController(session).get_jobs()
+
+
+@router.post("/set_job/")
+async def set_job(
+    request: SetJob,
+    dependencies=Depends(JWTBearer()),
+    session: Session = Depends(get_session),
+):
+    token = dependencies
+    payload = decodeJWT(token)
+    user_id = payload["sub"]
+
+    return UserController(session).set_job(request, user_id)

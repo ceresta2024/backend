@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, Integer, String, Boolean
+from sqlalchemy import Column, DateTime, Integer, String, Boolean, Text
 
 from .base import Base
 
@@ -13,6 +13,7 @@ class User(Base):
     user_name = Column(String, unique=True, index=True, nullable=False)
     password = Column(String, nullable=False)
     game_money = Column(Integer)
+    job_id = Column(Integer)
     status = Column(Integer)
     created = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated = Column(DateTime, default=datetime.utcnow, nullable=False)
@@ -26,3 +27,13 @@ class TokenTable(Base):
     refresh_token = Column(String(450), nullable=False)
     status = Column(Boolean)
     created_date = Column(DateTime, default=datetime.utcnow)
+
+
+class Job(Base):
+    __tablename__ = "job"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    description = Column(Text, nullable=False)
+    created = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated = Column(DateTime, default=datetime.utcnow, nullable=False)
