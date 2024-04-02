@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field, validator
+from typing import Optional
 import datetime
 
 
@@ -35,6 +36,19 @@ class NickToken(BaseModel):
 class TokenSchema(BaseModel):
     access_token: str = Field(min_length=10)
     refresh_token: str = Field(min_length=10)
+
+
+class UserInfo(BaseModel):
+    id: int
+    name: str = Field(min_length=5)
+    email: str = Field(min_length=5)
+    gold: int
+    job_id: Optional[int] = Field(nullable=True)
+    status: Optional[int] = Field(nullable=True)
+
+
+class LoginUserInfo(UserInfo):
+    access_token: str = Field(min_length=10)
 
 
 class ChangePassword(BaseModel):

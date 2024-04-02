@@ -73,9 +73,16 @@ class UserController:
         self.session.add(token_db)
         self.session.commit()
         self.session.refresh(token_db)
+
+        game_money = 0 if user.game_money is None else user.game_money
         return {
             "access_token": access,
-            "refresh_token": refresh,
+            "id": user.id,
+            "name": user.user_name,
+            "email": user.email,
+            "gold": game_money,
+            "job_id": user.job_id,
+            "status": user.status,
         }
 
     def logout(self, token: str, user_id: int):
@@ -105,6 +112,23 @@ class UserController:
             self.session.refresh(existing_token)
 
         return {"message": "Logout Successfully"}
+
+    def get_info(self, user_id: int):
+        user = self.session.query(User).filter(User.id == user_id).first()
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect token"
+            )
+
+        game_money = 0 if user.game_money is None else user.game_money
+        return {
+            "id": user.id,
+            "name": user.user_name,
+            "email": user.email,
+            "gold": game_money,
+            "job_id": user.job_id,
+            "status": user.status,
+        }
 
     def change_password(self, request: ChangePassword):
         if request.old_password == request.new_password:
