@@ -35,5 +35,18 @@ class Job(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     description = Column(Text, nullable=False)
+    allow_gold = Column(Integer, nullable=False)
+    speed = Column(Integer, nullable=False)
+    created = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+
+class Skill(Base):
+    __tablename__ = "skill"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    attributes = Column(Text, nullable=False)
+    job_id = Column(Integer)
     created = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated = Column(DateTime, default=datetime.utcnow, nullable=False)
