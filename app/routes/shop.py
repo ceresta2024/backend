@@ -18,7 +18,7 @@ namespace = "shop"
 @router.get("/get_store_list/")
 async def get_store_list(session: Session = Depends(get_session)):
     # Implement user creation logic here
-    return {"message": "Test user router"}
+    return ShopController(session).get_store_list()
 
 
 @router.get("/get_inventory_list/")

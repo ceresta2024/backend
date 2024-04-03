@@ -11,7 +11,7 @@ class Shop(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    item_id: int = Column(Integer, ForeignKey("item.id"))
+    item_id: int = Column(Integer, ForeignKey("item.id"), unique=True)
     item = orm.relationship("Item")
 
     price = Column(Integer, nullable=False)
