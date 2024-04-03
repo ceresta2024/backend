@@ -4,6 +4,8 @@ from sqlalchemy import Column, DateTime, Integer, String, Boolean, Text
 
 from .base import Base
 
+from app.utils.const import DEFAULT_ALLOW_GOLD, DEFAULT_SPEED
+
 
 class User(Base):
     __tablename__ = "user"
@@ -35,8 +37,8 @@ class Job(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     description = Column(Text, nullable=False)
-    allow_gold = Column(Integer, nullable=False)
-    speed = Column(Integer, nullable=False)
+    allow_gold = Column(Integer, default=DEFAULT_ALLOW_GOLD, nullable=False)
+    speed = Column(Integer, default=DEFAULT_SPEED, nullable=False)
     created = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated = Column(DateTime, default=datetime.utcnow, nullable=False)
 
