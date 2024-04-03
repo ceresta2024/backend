@@ -14,6 +14,6 @@ app.include_router(router)
 
 app.mount("/", sio_app)
 
-# populate_item_data()
+populate_item_data()
 
 populate_job_data()
