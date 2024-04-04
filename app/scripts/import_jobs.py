@@ -51,7 +51,11 @@ def insert_on_duplicate(table, conn, cols, data_iter):
     stmt = insert(table.table).values(list(data_iter))
     stmt = stmt.on_conflict_do_update(
         index_elements=["id"],
-        set_={col: getattr(stmt.excluded, col) for col in cols if col not in ["created", "img_path"]},
+        set_={
+            col: getattr(stmt.excluded, col)
+            for col in cols
+            if col not in ["created", "img_path"]
+        },
     )
     conn.execute(stmt)
 
@@ -98,16 +102,22 @@ def populate_job_data():
     global JOB_NAMES, UPDATE_SKILL_COLUMNS
 
     # Read Excel file with multiple sheets
-    xls = pd.read_excel(FILE_PATH, sheet_name=['jobs', 'skills'])
+    xls = pd.read_excel(FILE_PATH, sheet_name=["jobs", "skills"])
 
     # Access individual sheets using sheet names
-    df_jobs = xls['jobs']
-    df_skills = xls['skills']
+    df_jobs = xls["jobs"]
+    df_skills = xls["skills"]
 
     df_jobs = validate_sheet_data(df_jobs, VALIDATION_JOB_COLUMNS, REMOVAL_JOB_COLUMNS)
-    JOB_NAMES = dict(zip(df_jobs[COLUMN_JOB_NAME], range(1, len(df_jobs[COLUMN_JOB_NAME]))))
+    JOB_NAMES = dict(
+        zip(df_jobs[COLUMN_JOB_NAME], range(1, len(df_jobs[COLUMN_JOB_NAME])))
+    )
     import_excel_data(df_jobs, Job.__tablename__, MAP_JOB_COLUMNS)
 
-    df_skills = validate_sheet_data(df_skills, VALIDATION_SKILL_COLUMNS, REMOVAL_SKILL_COLUMNS)
+    df_skills = validate_sheet_data(
+        df_skills, VALIDATION_SKILL_COLUMNS, REMOVAL_SKILL_COLUMNS
+    )
     UPDATE_SKILL_COLUMNS[COLUMN_SKILL_JOB_NAME] = JOB_NAMES
-    import_excel_data(df_skills, Skill.__tablename__, MAP_SKILL_COLUMNS, UPDATE_SKILL_COLUMNS)
+    import_excel_data(
+        df_skills, Skill.__tablename__, MAP_SKILL_COLUMNS, UPDATE_SKILL_COLUMNS
+    )

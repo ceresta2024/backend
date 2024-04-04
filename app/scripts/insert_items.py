@@ -2,9 +2,11 @@ from datetime import datetime
 
 import pandas as pd
 
-from app.models.base import engine
-from app.models.item import Item
 from sqlalchemy.dialects.postgresql import insert
+
+from app.models.base import engine, get_session
+from app.models.item import Item
+from app.models.shop import Shop
 
 
 FILE_PATH = "app/scripts/items.xlsx"
@@ -75,12 +77,18 @@ MAP_COLUMNS = {
     # 'Duration': 'duration',
 }
 
+INITIAL_ITEM_QUANTITY = 10
+
 
 def insert_on_duplicate(table, conn, cols, data_iter):
     stmt = insert(table.table).values(list(data_iter))
     stmt = stmt.on_conflict_do_update(
         index_elements=["id"],
-        set_={col: getattr(stmt.excluded, col) for col in cols if col not in ["created", "img_path"]},
+        set_={
+            col: getattr(stmt.excluded, col)
+            for col in cols
+            if col not in ["created", "img_path"]
+        },
     )
     conn.execute(stmt)
 
@@ -109,11 +117,50 @@ def populate_item_data():
     # Rename columns to db columns
     df = df.rename(columns=MAP_COLUMNS)
 
-    # populate db
+    # populate item db
     df.to_sql(
         Item.__tablename__,
         con=engine,
         if_exists="append",
         index=False,
         method=insert_on_duplicate,
+    )
+
+    # populate item db
+    populate_shop_data(df)
+
+
+def insert_do_nothing_on_conflicts(table, conn, cols, data_iter):
+    stmt = insert(table.table).values(list(data_iter))
+    stmt = stmt.on_conflict_do_nothing(index_elements=["item_id"])
+    conn.execute(stmt)
+
+
+def populate_shop_data(df):
+    # remove unmatched columns to shop db
+    for column in [
+        "name",
+        "group",
+        "function",
+        "type",
+        "level",
+        "description",
+        "img_path",
+    ]:
+        df.drop(column, inplace=True, axis="columns")
+
+    # item_ids = [r.item_id for r in next(get_session()).query(Shop).all()]
+
+    # Rename columns to db columns
+    df = df.rename(columns={"id": "item_id"})
+
+    df.insert(3, "quantity", INITIAL_ITEM_QUANTITY)
+
+    # populate db
+    df.to_sql(
+        Shop.__tablename__,
+        con=engine,
+        if_exists="append",
+        index=False,
+        method=insert_do_nothing_on_conflicts,
     )

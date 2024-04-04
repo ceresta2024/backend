@@ -55,3 +55,11 @@ def create_refresh_token(subject: Union[str, Any], expires_delta: int = None) ->
 
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return "".join(random.choice(chars) for _ in range(size))
+
+
+def get_list_of_dict(keys, list_of_tuples):
+    """
+    This function will accept keys and list_of_tuples as args and return list of dicts
+    """
+    list_of_dict = [dict(zip(keys, values)) for values in list_of_tuples]
+    return list_of_dict
