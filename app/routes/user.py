@@ -28,8 +28,7 @@ def token_required(func):
         token = kwargs["dependencies"]
         session = kwargs["session"]
 
-        payload = decodeJWT(token)
-        user_id = payload["sub"]
+        user_id = decodeJWT(token)["sub"]
         data = UserController(session).token_required(token, user_id)
         if data:
             return func(token, session)
@@ -50,29 +49,19 @@ async def login(request: RequestDetails, session: Session = Depends(get_session)
 
 
 @router.post("/logout")
-def logout(dependencies=Depends(JWTBearer()), session: Session = Depends(get_session)):
-    token = dependencies
-    payload = decodeJWT(token)
-    user_id = payload["sub"]
-
+def logout(token=Depends(JWTBearer()), session: Session = Depends(get_session)):
+    user_id = decodeJWT(token)["sub"]
     return UserController(session).logout(token, user_id)
 
 
 @router.post("/getinfo", response_model=UserInfo)
-def get_user_info(
-    dependencies=Depends(JWTBearer()), session: Session = Depends(get_session)
-):
-    token = dependencies
-    payload = decodeJWT(token)
-    user_id = payload["sub"]
-
+def get_user_info(token=Depends(JWTBearer()), session: Session = Depends(get_session)):
+    user_id = decodeJWT(token)["sub"]
     return UserController(session).get_info(user_id)
 
 
 @router.get("/getusers")
-def getusers(
-    dependencies=Depends(JWTBearer()), session: Session = Depends(get_session)
-):
+def getusers(token=Depends(JWTBearer()), session: Session = Depends(get_session)):
     return UserController(session).get_users()
 
 
@@ -84,7 +73,7 @@ async def change_account(session: Session = Depends(get_session)):
 @router.post("/change_password/")
 async def change_password(
     request: ChangePassword,
-    dependencies=Depends(JWTBearer()),
+    token=Depends(JWTBearer()),
     session: Session = Depends(get_session),
 ):
     return UserController(session).change_password(request)
@@ -97,31 +86,23 @@ async def get_nickname(session: Session = Depends(get_session)):
 
 @router.get("/get_gold/")
 async def get_nickname(
-    dependencies=Depends(JWTBearer()), session: Session = Depends(get_session)
+    token=Depends(JWTBearer()), session: Session = Depends(get_session)
 ):
-    token = dependencies
-    payload = decodeJWT(token)
-    user_id = payload["sub"]
-
+    user_id = decodeJWT(token)["sub"]
     return UserController(session).get_money(user_id)
 
 
 ### Job apis
 @router.get("/get_jobs/")
-async def get_jobs(
-    dependencies=Depends(JWTBearer()), session: Session = Depends(get_session)
-):
+async def get_jobs(token=Depends(JWTBearer()), session: Session = Depends(get_session)):
     return UserController(session).get_jobs()
 
 
 @router.post("/set_job/")
 async def set_job(
     request: SetJob,
-    dependencies=Depends(JWTBearer()),
+    token=Depends(JWTBearer()),
     session: Session = Depends(get_session),
 ):
-    token = dependencies
-    payload = decodeJWT(token)
-    user_id = payload["sub"]
-
+    user_id = decodeJWT(token)["sub"]
     return UserController(session).set_job(request, user_id)

@@ -18,9 +18,6 @@ class ShopController:
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    def get_items(self) -> list[Item]:
-        return self.session.query(Item).all()
-
     def get_store_list(self) -> list:
         data = (
             self.session.query(Shop.id, Item.id, Item.name, Shop.price, Shop.quantity)

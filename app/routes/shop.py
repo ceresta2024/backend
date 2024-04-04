@@ -44,10 +44,3 @@ async def buy_item(
 ):
     user_id = decodeJWT(token)["sub"]
     return ShopController(session).buy_item(request, user_id)
-
-
-@router.get("/get_items/")
-async def get_items(
-    token=Depends(JWTBearer()), session: Session = Depends(get_session)
-):
-    return ShopController(session).get_items()
