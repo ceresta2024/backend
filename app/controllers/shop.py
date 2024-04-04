@@ -7,8 +7,10 @@ from sqlalchemy import select
 from app.models.inventory import Inventory
 from app.models.item import Item
 from app.models.shop import Shop
-from app.schemas.shop import StoreList, RequestBuyItem
+from app.schemas.shop import StoreList, InventoryList, RequestBuyItem
 from app.utils.common import get_list_of_dict
+
+BUY_SELL_RATIO = 0.9
 
 
 class ShopController:
@@ -26,6 +28,19 @@ class ShopController:
             .all()
         )
         return get_list_of_dict(StoreList.__fields__.keys(), data)
+
+    def get_inventory_list(self, user_id: int) -> list:
+        data = (
+            self.session.query(Item.name, Inventory.item_id, Inventory.quantity, Shop.price)
+            .join(Inventory, Inventory.item_id == Item.id)
+            .join(Shop, Shop.item_id == Item.id)
+            .filter(Inventory.user_id == user_id)
+            .all()
+        )
+        items = get_list_of_dict(InventoryList.__fields__.keys(), data)
+        for item in items:
+            item["price"] = int(item["price"] * BUY_SELL_RATIO)
+        return items
 
     def buy_item(self, request: RequestBuyItem, user_id: int):
         shop_item = (

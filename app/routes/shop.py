@@ -19,14 +19,15 @@ async def get_store_list(session: Session = Depends(get_session)):
 
 
 @router.get("/get_inventory_list/")
-async def get_inventory_list(session: Session = Depends(get_session)):
-    return {"message": "Test user router"}
+async def get_inventory_list(token=Depends(JWTBearer()), session: Session = Depends(get_session)):
+    user_id = decodeJWT(token)["sub"]
+    return ShopController(session).get_inventory_list(user_id)
 
 
 @router.post("/sell_item/")
 async def sell_item(
     request: RequestBuyItem,
-    dependencies=Depends(JWTBearer()),
+    token=Depends(JWTBearer()),
     session: Session = Depends(get_session),
 ):
     return ShopController(session).sell_item()
@@ -35,18 +36,15 @@ async def sell_item(
 @router.post("/buy_item/")
 async def buy_item(
     request: RequestBuyItem,
-    dependencies=Depends(JWTBearer()),
+    token=Depends(JWTBearer()),
     session: Session = Depends(get_session),
 ):
-    token = dependencies
-    payload = decodeJWT(token)
-    user_id = payload["sub"]
-
+    user_id = decodeJWT(token)["sub"]
     return ShopController(session).buy_item(request, user_id)
 
 
 @router.get("/get_items/")
 async def get_items(
-    dependencies=Depends(JWTBearer()), session: Session = Depends(get_session)
+    token=Depends(JWTBearer()), session: Session = Depends(get_session)
 ):
     return ShopController(session).get_items()
