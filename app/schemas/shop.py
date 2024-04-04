@@ -19,3 +19,8 @@ class InventoryList(BaseModel):
 class RequestBuyItem(BaseModel):
     item_id: int
     quantity: int
+
+
+class RequestSellItem(BaseModel):
+    item_id: int
+    quantity: int
