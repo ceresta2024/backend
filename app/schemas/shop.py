@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class StoreList(BaseModel):
@@ -6,4 +6,21 @@ class StoreList(BaseModel):
     item_id: int
     name: str
     price: int
+    quantity: int
+
+
+class InventoryList(BaseModel):
+    name: int
+    item_id: int
+    quantity: int
+    price: int
+
+
+class RequestBuyItem(BaseModel):
+    item_id: int
+    quantity: int
+
+
+class RequestSellItem(BaseModel):
+    item_id: int
     quantity: int
