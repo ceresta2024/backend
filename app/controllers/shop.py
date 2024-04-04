@@ -34,7 +34,7 @@ class ShopController:
             )
             .join(Inventory, Inventory.item_id == Item.id)
             .join(Shop, Shop.item_id == Item.id)
-            .filter(Inventory.user_id == user_id)
+            .filter(Inventory.user_id == user_id, Inventory.quantity > 0)
             .all()
         )
         items = get_list_of_dict(InventoryList.__fields__.keys(), data)
