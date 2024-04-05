@@ -73,6 +73,7 @@ UPDATE_NOTICE_COLUMNS = {
     COLUMN_NOTICE_AVAILABLE: NOTICE_AVAILABLES,
 }
 
+
 def insert_on_duplicate(table, conn, cols, data_iter):
     stmt = insert(table.table).values(list(data_iter))
     stmt = stmt.on_conflict_do_update(

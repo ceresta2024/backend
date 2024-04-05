@@ -106,3 +106,8 @@ async def set_job(
 ):
     user_id = decodeJWT(token)["sub"]
     return UserController(session).set_job(request, user_id)
+
+
+@router.get("/get_notice/")
+async def get_notice(session: Session = Depends(get_session)):
+    return UserController(session).get_notice()
