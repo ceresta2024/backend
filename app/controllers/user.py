@@ -4,6 +4,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session, load_only
 
 from app.models.user import User, TokenTable, Job
+from app.models.notice import Notice
 from app.schemas.user import (
     UserCreate,
     RequestDetails,
@@ -191,7 +192,11 @@ class UserController:
         }
 
     def get_jobs(self):
-        return self.session.query(Job).options(load_only(Job.id, Job.name, Job.description)).all()
+        return (
+            self.session.query(Job)
+            .options(load_only(Job.id, Job.name, Job.description))
+            .all()
+        )
 
     def set_job(self, request: SetJob, user_id: int):
         job = self.session.query(Job).filter(Job.id == request.job_id).first()
@@ -210,3 +215,11 @@ class UserController:
         self.session.commit()
 
         return {"message": "Set job successfully"}
+
+    def get_notice(self):
+        return (
+            self.session.query(Notice)
+            .options(load_only(Notice.contents, Notice.type))
+            .filter(Notice.is_available == 1)
+            .all()
+        )
