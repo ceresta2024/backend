@@ -4,6 +4,7 @@ import pandas as pd
 
 from app.models.base import engine
 from app.models.user import Job, Skill
+from app.models.notice import Notice
 from sqlalchemy.dialects.postgresql import insert
 
 
@@ -46,6 +47,31 @@ UPDATE_SKILL_COLUMNS = {
     COLUMN_SKILL_JOB_NAME: JOB_NAMES,
 }
 
+### Notifications Sheet
+COLUMN_NOTICE_NO = "No"
+COLUMN_NOTICE_CONTENTS = "Contents"
+COLUMN_NOTICE_TYPE = "Type"
+COLUMN_NOTICE_AVAILABLE = "Is Available"
+MAP_NOTICE_COLUMNS = {
+    COLUMN_NOTICE_NO: "id",
+    COLUMN_NOTICE_CONTENTS: "contents",
+    COLUMN_NOTICE_TYPE: "type",
+    COLUMN_NOTICE_AVAILABLE: "is_available",
+}
+VALIDATION_NOTICE_COLUMNS = []
+REMOVAL_NOTICE_COLUMNS = []
+NOTICE_TYPES = {
+    "event": 0,
+    "item": 1,
+}
+NOTICE_AVAILABLES = {
+    "no": 0,
+    "yes": 1,
+}
+UPDATE_NOTICE_COLUMNS = {
+    COLUMN_NOTICE_TYPE: NOTICE_TYPES,
+    COLUMN_NOTICE_AVAILABLE: NOTICE_AVAILABLES,
+}
 
 def insert_on_duplicate(table, conn, cols, data_iter):
     stmt = insert(table.table).values(list(data_iter))
@@ -102,22 +128,33 @@ def populate_job_data():
     global JOB_NAMES, UPDATE_SKILL_COLUMNS
 
     # Read Excel file with multiple sheets
-    xls = pd.read_excel(FILE_PATH, sheet_name=["jobs", "skills"])
+    xls = pd.read_excel(FILE_PATH, sheet_name=["jobs", "skills", "notices"])
 
     # Access individual sheets using sheet names
     df_jobs = xls["jobs"]
     df_skills = xls["skills"]
+    df_notices = xls["notices"]
 
+    ### import jobs
     df_jobs = validate_sheet_data(df_jobs, VALIDATION_JOB_COLUMNS, REMOVAL_JOB_COLUMNS)
     JOB_NAMES = dict(
         zip(df_jobs[COLUMN_JOB_NAME], range(1, len(df_jobs[COLUMN_JOB_NAME])))
     )
     import_excel_data(df_jobs, Job.__tablename__, MAP_JOB_COLUMNS)
 
+    ### import skills
     df_skills = validate_sheet_data(
         df_skills, VALIDATION_SKILL_COLUMNS, REMOVAL_SKILL_COLUMNS
     )
     UPDATE_SKILL_COLUMNS[COLUMN_SKILL_JOB_NAME] = JOB_NAMES
     import_excel_data(
         df_skills, Skill.__tablename__, MAP_SKILL_COLUMNS, UPDATE_SKILL_COLUMNS
+    )
+
+    ### import notices
+    df_notices = validate_sheet_data(
+        df_notices, VALIDATION_NOTICE_COLUMNS, REMOVAL_NOTICE_COLUMNS
+    )
+    import_excel_data(
+        df_notices, Notice.__tablename__, MAP_NOTICE_COLUMNS, UPDATE_NOTICE_COLUMNS
     )
