@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, load_only
 
 from app.models.user import User, TokenTable, Job
 from app.schemas.user import (
@@ -191,7 +191,7 @@ class UserController:
         }
 
     def get_jobs(self):
-        return self.session.query(Job).all()
+        return self.session.query(Job).options(load_only(Job.id, Job.name, Job.description)).all()
 
     def set_job(self, request: SetJob, user_id: int):
         job = self.session.query(Job).filter(Job.id == request.job_id).first()
