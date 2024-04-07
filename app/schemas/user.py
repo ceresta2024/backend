@@ -67,3 +67,7 @@ class TokenCreate(BaseModel):
     refresh_token: str
     status: bool
     created_date: datetime.datetime
+
+
+class GetReward(BaseModel):
+    box_id: int = Field(ge=0, le=3)
