@@ -21,5 +21,7 @@ class UserItemLog(Base):
     item_id: int = Column(Integer, ForeignKey("item.id"))
     item = orm.relationship("Item")
 
+    score = Column(Integer, nullable=False, default=0)
+
     created = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated = Column(DateTime, default=datetime.utcnow, nullable=False)

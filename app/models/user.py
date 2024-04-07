@@ -15,6 +15,7 @@ class User(Base):
     user_name = Column(String, unique=True, index=True, nullable=False)
     password = Column(String, nullable=False)
     game_money = Column(Integer, nullable=False, default=0)
+    score = Column(Integer, nullable=False, default=0)
     job_id = Column(Integer)
     status = Column(Integer)
     created = Column(DateTime, default=datetime.utcnow, nullable=False)

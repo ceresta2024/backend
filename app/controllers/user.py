@@ -2,8 +2,11 @@ from datetime import datetime
 
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session, load_only
+from sqlalchemy.sql.expression import func
 
 from app.models.user import User, TokenTable, Job
+from app.models.item import Item
+from app.models.user_item_log import UserItemLog
 from app.models.notice import Notice
 from app.schemas.user import (
     UserCreate,
@@ -11,6 +14,7 @@ from app.schemas.user import (
     NickToken,
     ChangePassword,
     SetJob,
+    GetReward,
 )
 from app.utils.common import (
     id_generator,
@@ -19,6 +23,7 @@ from app.utils.common import (
     create_refresh_token,
     get_hashed_password,
 )
+from app.utils.const import SCORES_PER_BOX
 
 
 class UserController:
@@ -223,3 +228,52 @@ class UserController:
             .filter(Notice.is_available == 1)
             .all()
         )
+
+    def get_reward(self, request: GetReward, user_id: int):
+        ### Adds score by box into user's score
+        score = SCORES_PER_BOX[request.box_id]
+        user = self.session.query(User).filter(User.id == user_id).first()
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="User not found"
+            )
+
+        new_score = user.score + score
+        user.score = new_score
+        self.session.commit()
+
+        ### Choose item in random from items table
+        item = (
+            self.session.query(Item)
+            .options(
+                load_only(
+                    Item.id,
+                    Item.name,
+                    Item.description,
+                    Item.img_path,
+                    Item.price,
+                    Item.type,
+                )
+            )
+            .filter(Item.level == request.box_id)
+            .order_by(func.random())
+            .first()
+        )
+        if item is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Item not chosen"
+            )
+
+        ### Save the log for reward
+        new_item_log = UserItemLog(user_id=user_id, item_id=item.id, score=score)
+        self.session.add(new_item_log)
+        self.session.commit()
+
+        return {
+            "user_score": new_score,
+            "item_id": item.id,
+            "item_name": item.name,
+            "item_desc": item.description,
+            "item_img": item.img_path,
+            "item_price": item.price,
+        }
