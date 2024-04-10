@@ -18,23 +18,30 @@ class ShopController:
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    def get_store_list(self) -> list:
+    def get_store_list(self, keyword: str) -> list:
+        filter_args = []
+        filter_args.append(Shop.quantity > 0)
+        if keyword:
+            filter_args.append(Item.name.ilike(f"%{keyword}%"))
         data = (
             self.session.query(Shop.id, Item.id, Item.name, Shop.price, Shop.quantity)
             .join(Shop, Shop.item_id == Item.id)
-            .filter(Shop.quantity > 0)
+            .filter(*filter_args)
             .all()
         )
         return get_list_of_dict(StoreList.__fields__.keys(), data)
 
-    def get_inventory_list(self, user_id: int) -> list:
+    def get_inventory_list(self, user_id: int, keyword: str) -> list:
+        filter_args = [Inventory.user_id == user_id, Inventory.quantity > 0]
+        if keyword:
+            filter_args.append(Item.name.ilike(f"%{keyword}%"))
         data = (
             self.session.query(
                 Item.name, Inventory.item_id, Inventory.quantity, Shop.price
             )
             .join(Inventory, Inventory.item_id == Item.id)
             .join(Shop, Shop.item_id == Item.id)
-            .filter(Inventory.user_id == user_id, Inventory.quantity > 0)
+            .filter(*filter_args)
             .all()
         )
         items = get_list_of_dict(InventoryList.__fields__.keys(), data)
