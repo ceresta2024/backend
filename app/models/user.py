@@ -21,6 +21,18 @@ class User(Base):
     created = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated = Column(DateTime, default=datetime.utcnow, nullable=False)
 
+    @property
+    def info(self):
+        return {
+            "id": self.id,
+            "name": self.user_name,
+            "email": self.email,
+            "gold": self.game_money,
+            "score": self.score,
+            "job_id": self.job_id,
+            "status": self.status,
+        }
+
 
 class TokenTable(Base):
     __tablename__ = "token"
