@@ -2,6 +2,7 @@ import schedule
 import time
 
 from datetime import datetime
+from threading import Thread
 
 from app.tasks import celery
 
@@ -31,3 +32,8 @@ class BackgroundTasks:
         while True:
             schedule.run_pending()
             time.sleep(1)
+
+    def run(self):
+        T = Thread(target=self.run_schedule_jobs)
+        T.setDaemon(True)
+        T.start()

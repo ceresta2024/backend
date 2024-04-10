@@ -19,5 +19,4 @@ populate_item_data()
 
 populate_job_data()
 
-t = BackgroundTasks()
-t.run_schedule_jobs()
+BackgroundTasks().run()
