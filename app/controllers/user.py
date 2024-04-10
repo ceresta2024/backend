@@ -132,6 +132,7 @@ class UserController:
             "name": user.user_name,
             "email": user.email,
             "gold": game_money,
+            "score": user.score,
             "job_id": user.job_id,
             "status": user.status,
         }
@@ -194,6 +195,16 @@ class UserController:
         game_money = 0 if user.game_money is None else user.game_money
         return {
             "gold": game_money,
+        }
+
+    def get_score(self, user_id: int):
+        user = self.session.query(User).filter(User.id == user_id).first()
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect token"
+            )
+        return {
+            "score": user.score,
         }
 
     def get_jobs(self):

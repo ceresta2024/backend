@@ -93,6 +93,14 @@ async def get_nickname(
     return UserController(session).get_money(user_id)
 
 
+@router.get("/get_score/")
+async def get_nickname(
+    token=Depends(JWTBearer()), session: Session = Depends(get_session)
+):
+    user_id = decodeJWT(token)["sub"]
+    return UserController(session).get_score(user_id)
+
+
 ### Job apis
 @router.get("/get_jobs/")
 async def get_jobs(token=Depends(JWTBearer()), session: Session = Depends(get_session)):
