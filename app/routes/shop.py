@@ -14,16 +14,22 @@ namespace = "shop"
 
 
 @router.get("/get_store_list/")
-async def get_store_list(session: Session = Depends(get_session)):
-    return ShopController(session).get_store_list()
+async def get_store_list(
+    keyword: str | None = None,
+    token=Depends(JWTBearer()),
+    session: Session = Depends(get_session),
+):
+    return ShopController(session).get_store_list(keyword)
 
 
 @router.get("/get_inventory_list/")
 async def get_inventory_list(
-    token=Depends(JWTBearer()), session: Session = Depends(get_session)
+    keyword: str | None = None,
+    token=Depends(JWTBearer()),
+    session: Session = Depends(get_session),
 ):
     user_id = decodeJWT(token)["sub"]
-    return ShopController(session).get_inventory_list(user_id)
+    return ShopController(session).get_inventory_list(user_id, keyword)
 
 
 @router.post("/sell_item/")
