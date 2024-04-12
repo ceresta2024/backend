@@ -17,10 +17,9 @@ async def get_starttime(session: Session = Depends(get_session)):
     return GameController(session).get_launch_time()
 
 
-@router.get("/is_open/")
-async def is_open():
-    # Implement user creation logic here
-    return {"message": "Test user router"}
+@router.get("/is_opened/")
+async def is_opened(session: Session = Depends(get_session)):
+    return GameController(session).is_opened()
 
 
 @router.post("/get_reward/")

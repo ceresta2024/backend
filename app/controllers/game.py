@@ -18,10 +18,12 @@ from app.models.user_item_log import UserItemLog
 class GameController:
     def __init__(self, session: Session) -> None:
         self.session = session
-        self.map_data = {}
 
     def get_launch_time(self) -> str:
         return GAME.launch_time.strftime("%Y-%m-%d %H:%M:%S")
+
+    def is_opened(self) -> dict:
+        return {"opened": GAME.is_opened()}
 
     def get_reward(self, reward: RewardRequest) -> RewardResponse:
         is_nickname = False

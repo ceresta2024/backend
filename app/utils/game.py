@@ -11,6 +11,13 @@ class Game:
         self.rooms = {}
         self.room_count = 0
         self.launch_time = self.get_launch_time()
+        self.down_time = self.launch_time + timedelta(minutes=const.GAME_COUNTDWON_TIME)
+
+    def is_opened(self):
+        now = datetime.utcnow()
+        if self.launch_time <= now and now < self.down_time:
+            return True
+        return False
 
     def get_launch_time(self):
         now = datetime.utcnow()
@@ -20,12 +27,6 @@ class Game:
         diff_hour = next_hour - now.hour
         normal_now = now.replace(minute=0, second=0, microsecond=0)
         return normal_now + timedelta(hours=diff_hour)
-
-    def initalize(self):
-        now = datetime.utcnow()
-        if now < self.launch_time + timedelta(minutes=const.GAME_COUNTDWON_TIME):
-            return
-        self.reset()
 
     def add_room(self, room_name):
         self.rooms[room_name] = {

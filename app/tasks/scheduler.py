@@ -1,6 +1,7 @@
 import schedule
 import time
 
+from datetime import datetime
 from threading import Thread
 
 from app.tasks import celery
@@ -21,7 +22,8 @@ class BackgroundTasks:
         print("Server is live")
 
     def initalize_game_data(self):
-        GAME.initalize()
+        if datetime.utcnow() > GAME.down_time:
+            GAME.reset()
 
     def init_schedule_jobs(self):
         schedule.every(1).minutes.do(self.initalize_game_data)
