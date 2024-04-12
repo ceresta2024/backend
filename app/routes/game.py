@@ -6,7 +6,8 @@ from app.controllers import GameController
 from app.models.base import get_session
 from app.schemas.game import NewRoomRequest, RewardRequest
 
-from app.utils.auth_bearer import JWTBearer, decodeJWT
+from app.utils.auth_bearer import JWTBearer
+from app.utils.common import get_user_data
 
 router = APIRouter()
 namespace = "game"
@@ -24,15 +25,29 @@ async def is_opened(session: Session = Depends(get_session)):
 
 @router.post("/add_room/")
 async def add_room(
-    new_room: NewRoomRequest,
+    room_name: str,
+    token=Depends(JWTBearer()),
     session: Session = Depends(get_session),
 ):
-    return GameController(session).add_room(new_room)
+    user_data = get_user_data(token)
+    return GameController(session).add_room(room_name, user_data)
+
+
+@router.post("/add_user/")
+async def add_user(
+    room_id: str,
+    token=Depends(JWTBearer()),
+    session: Session = Depends(get_session),
+):
+    user_data = get_user_data(token)
+    return GameController(session).add_user(room_id, user_data)
 
 
 @router.post("/get_reward/")
 async def get_reward(
     reward: RewardRequest,
+    token=Depends(JWTBearer()),
     session: Session = Depends(get_session),
 ):
-    return GameController(session).get_reward(reward)
+    user_data = get_user_data(token)
+    return GameController(session).get_reward(reward, user_data)

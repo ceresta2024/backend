@@ -25,25 +25,28 @@ class GameController:
     def is_opened(self) -> dict:
         return {"opened": GAME.is_opened()}
 
-    def add_room(self, room_name, user_id) -> RoomResponse:
-        room_id, map_id = GAME.add_room(room_name, user_id)
+    def add_room(self, room_name, user_data) -> RoomResponse:
+        if not GAME.is_opened():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Request"
+            )
+        room_id, map_id = GAME.add_room(room_name, user_data)
         return RoomResponse(room_id=room_id, map_id=map_id)
 
-    def get_reward(self, reward: RewardRequest) -> RewardResponse:
-        is_nickname = False
-        # Get user info
-        token = (
-            self.session.query(TokenTable)
-            .filter(TokenTable.access_token == reward.token)
-            .first()
-        )
-        if not token:
-            jwt = decodeJWT(reward.token)
-            if not jwt:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Token"
-                )
-            is_nickname = True
+    def add_user(self, room_id, user_data) -> RoomResponse:
+        if not GAME.is_opened():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Request"
+            )
+        room_id, map_id = GAME.add_user(room_id, user_data)
+        if map_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Request"
+            )
+        return RoomResponse(room_id=room_id, map_id=map_id)
+
+    def get_reward(self, reward: RewardRequest, user_data) -> RewardResponse:
+        is_nickname = user_data.get("username")
 
         # Get item randomly
         item = (
@@ -60,8 +63,10 @@ class GameController:
         ):  # Return reward info without logging in useritemlog and inventory for nicknam user
             return RewardResponse(id=item.id, name=item.name, price=item.price)
 
+        user_id = user_data["user_id"]
+
         # Add log in useritemlog
-        new_log = UserItemLog(user_id=token.user_id, item_id=item.id)
+        new_log = UserItemLog(user_id=user_id, item_id=item.id)
         self.session.add(new_log)
         self.session.commit()
         self.session.refresh(new_log)
@@ -71,7 +76,7 @@ class GameController:
             self.session.query(Inventory).filter(Inventory.item_id == item.id).first()
         )
         if inven is None:
-            new_inven = Inventory(user_id=token.user_id, item_id=item.id, quantity=1)
+            new_inven = Inventory(user_id=user_id, item_id=item.id, quantity=1)
             self.session.add(new_inven)
             self.session.commit()
             self.session.refresh(new_inven)

@@ -13,7 +13,7 @@ class NewRoomRequest(BaseModel):
 
 
 class RoomResponse(BaseModel):
-    room_id: int
+    room_id: str
     map_id: int
 
 
@@ -21,7 +21,6 @@ class RewardRequest(BaseModel):
     room_id: int
     map_id: int
     box_type: int
-    token: str
 
 
 class RewardResponse(BaseModel):

@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from app.utils import const
 from app.utils.common import id_generator
 
+
 class Game:
     def __init__(self):
         self.reset()
@@ -14,6 +15,7 @@ class Game:
         self.down_time = self.launch_time + timedelta(minutes=const.GAME_COUNTDWON_TIME)
 
     def is_opened(self):
+        return True
         now = datetime.utcnow()
         if self.launch_time <= now and now < self.down_time:
             return True
@@ -28,9 +30,10 @@ class Game:
         normal_now = now.replace(minute=0, second=0, microsecond=0)
         return normal_now + timedelta(hours=diff_hour)
 
-    def add_room(self, room_name, user_id):
-        room_id = id_generator()
+    def add_room(self, room_name, user_data):
+        room_id = "RM_" + id_generator()
         map_id = 0
+        user_id = user_data.get("user_id", user_data["username"])
         self.rooms[room_id] = {
             "name": room_name,
             "map_id": map_id,
@@ -43,5 +46,9 @@ class Game:
         self.room_count += 1
         return room_id, map_id
 
-    def add_user(self, room_name, user_id):
-        self.rooms[room_name]["users"].append(user_id)
+    def add_user(self, room_id, user_data):
+        user_id = user_data.get("user_id", user_data["username"])
+        if room_id not in self.rooms:
+            return room_id, None
+        self.rooms[room_id]["users"].append(user_id)
+        return room_id, self.rooms[room_id]["map_id"]
