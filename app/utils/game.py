@@ -21,7 +21,7 @@ class Game:
         normal_now = now.replace(minute=0, second=0, microsecond=0)
         return normal_now + timedelta(hours=diff_hour)
 
-    def update_data(self):
+    def initalize(self):
         now = datetime.utcnow()
         if now < self.launch_time + timedelta(minutes=const.GAME_COUNTDWON_TIME):
             return

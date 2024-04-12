@@ -20,12 +20,11 @@ class BackgroundTasks:
     def check_live(self):
         print("Server is live")
 
-    def update_room_data(self):
-        GAME.update_data()
+    def initalize_game_data(self):
+        GAME.initalize()
 
     def init_schedule_jobs(self):
-        schedule.every(1).minutes.do(self.check_live)
-        schedule.every(10).seconds.do(self.update_room_data)
+        schedule.every(1).minutes.do(self.initalize_game_data)
 
     def run_schedule_jobs(self):
         while True:
