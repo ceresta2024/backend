@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from app.utils import const
-
+from app.utils.common import id_generator
 
 class Game:
     def __init__(self):
@@ -28,15 +28,20 @@ class Game:
         normal_now = now.replace(minute=0, second=0, microsecond=0)
         return normal_now + timedelta(hours=diff_hour)
 
-    def add_room(self, room_name):
-        self.rooms[room_name] = {
-            "user": [],
+    def add_room(self, room_name, user_id):
+        room_id = id_generator()
+        map_id = 0
+        self.rooms[room_id] = {
+            "name": room_name,
+            "map_id": map_id,
+            "users": [user_id],
             "itembox": {
                 "opened": 0,
                 "level": {"high": 0, "medium": 0, "low": 0},
             },
         }
         self.room_count += 1
+        return room_id, map_id
 
     def add_user(self, room_name, user_id):
         self.rooms[room_name]["users"].append(user_id)

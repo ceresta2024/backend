@@ -4,9 +4,9 @@ from sqlalchemy.orm import Session
 
 from app.controllers import GameController
 from app.models.base import get_session
-from app.schemas.game import RewardRequest
+from app.schemas.game import NewRoomRequest, RewardRequest
 
-from app.utils.auth_bearer import JWTBearer
+from app.utils.auth_bearer import JWTBearer, decodeJWT
 
 router = APIRouter()
 namespace = "game"
@@ -20,6 +20,14 @@ async def get_starttime(session: Session = Depends(get_session)):
 @router.get("/is_opened/")
 async def is_opened(session: Session = Depends(get_session)):
     return GameController(session).is_opened()
+
+
+@router.post("/add_room/")
+async def add_room(
+    new_room: NewRoomRequest,
+    session: Session = Depends(get_session),
+):
+    return GameController(session).add_room(new_room)
 
 
 @router.post("/get_reward/")

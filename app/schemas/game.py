@@ -7,7 +7,18 @@ class MapData(BaseModel):
     data: list
 
 
+class NewRoomRequest(BaseModel):
+    room_name: str
+    token: str
+
+
+class RoomResponse(BaseModel):
+    room_id: int
+    map_id: int
+
+
 class RewardRequest(BaseModel):
+    room_id: int
     map_id: int
     box_type: int
     token: str

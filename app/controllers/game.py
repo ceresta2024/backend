@@ -7,7 +7,7 @@ from app.utils import GAME
 
 from app.utils.auth_bearer import decodeJWT
 
-from app.schemas.game import RewardRequest, RewardResponse
+from app.schemas.game import RewardRequest, RewardResponse, RoomResponse
 
 from app.models.user import User, TokenTable
 from app.models.item import Item
@@ -24,6 +24,10 @@ class GameController:
 
     def is_opened(self) -> dict:
         return {"opened": GAME.is_opened()}
+
+    def add_room(self, room_name, user_id) -> RoomResponse:
+        room_id, map_id = GAME.add_room(room_name, user_id)
+        return RoomResponse(room_id=room_id, map_id=map_id)
 
     def get_reward(self, reward: RewardRequest) -> RewardResponse:
         is_nickname = False
