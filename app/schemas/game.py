@@ -8,7 +8,7 @@ class MapData(BaseModel):
 
 
 class RewardRequest(BaseModel):
-    maze_id: int
+    map_id: int
     box_type: int
     token: str
 

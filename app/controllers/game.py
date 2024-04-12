@@ -3,13 +3,11 @@ from sqlalchemy.sql import func
 
 from fastapi import HTTPException, status
 
-from app.schemas.maze import MapData
-from app.utils.gamemap import get_game_launch_time, generate_map
-from app.utils.const import MAP_WIDTH, MAP_HEIGHT
+from app.utils import GAME
 
 from app.utils.auth_bearer import decodeJWT
 
-from app.schemas.maze import RewardRequest, RewardResponse
+from app.schemas.game import RewardRequest, RewardResponse
 
 from app.models.user import User, TokenTable
 from app.models.item import Item
@@ -17,17 +15,13 @@ from app.models.inventory import Inventory
 from app.models.user_item_log import UserItemLog
 
 
-class MazeController:
+class GameController:
     def __init__(self, session: Session) -> None:
         self.session = session
+        self.map_data = {}
 
     def get_launch_time(self) -> str:
-        return get_game_launch_time()
-
-    def get_map_data(self) -> list:
-        data = generate_map()
-
-        return MapData(width=MAP_WIDTH, height=MAP_HEIGHT, data=data)
+        return GAME.launch_time.strftime("%Y-%m-%d %H:%M:%S")
 
     def get_reward(self, reward: RewardRequest) -> RewardResponse:
         is_nickname = False
