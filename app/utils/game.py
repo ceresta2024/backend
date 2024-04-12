@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from app.schemas.game import RewardRequest
 from app.utils import const
 from app.utils.common import id_generator
 
@@ -38,9 +39,12 @@ class Game:
             "name": room_name,
             "map_id": map_id,
             "users": [user_id],
+            "winners": [],
             "itembox": {
                 "opened": 0,
-                "level": {"high": 0, "medium": 0, "low": 0},
+                "high": 0,
+                "medium": 0,
+                "low": 0,
             },
         }
         self.room_count += 1
@@ -52,3 +56,28 @@ class Game:
             return room_id, None
         self.rooms[room_id]["users"].append(user_id)
         return room_id, self.rooms[room_id]["map_id"]
+
+    def update_itembox(self, room_id, box_level):
+        itembox = self.rooms[room_id]["itembox"]
+        if itembox["opened"] >= const.TOTAL_ITEMBOX_COUNT:
+            return False
+        box_level = box_level.lower()
+        if itembox[box_level] < const.ITEMBOX_COUNT[box_level]:
+            itembox[box_level] += 1
+            itembox["opened"] += 1
+            return True
+        return False
+
+    def validate_reward(self, reward: RewardRequest, user_data):
+        user_id = user_data.get("user_id", user_data["username"])
+        room_id = reward.room_id
+        if room_id not in self.rooms:
+            return False
+        if reward.map_id != self.rooms[room_id]["map_id"]:
+            return False
+        if user_id not in self.rooms[room_id]["users"]:
+            return False
+        if user_id in self.rooms[room_id]["winners"]:
+            return False
+        self.rooms[room_id]["winners"].append(room_id)
+        return True

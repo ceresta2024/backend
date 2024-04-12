@@ -46,6 +46,15 @@ class GameController:
         return RoomResponse(room_id=room_id, map_id=map_id)
 
     def get_reward(self, reward: RewardRequest, user_data) -> RewardResponse:
+        if GAME.validate_reward(reward, user_data):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Not Found items"
+            )
+        if not GAME.update_itembox(reward.room_id, reward.box_type):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Insufficient items"
+            )
+
         is_nickname = user_data.get("username")
 
         # Get item randomly
@@ -56,7 +65,9 @@ class GameController:
             .first()
         )
         if not item:
-            raise HTTPException(status_code=401, detail="Not Found items")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Not Found items"
+            )
 
         if (
             is_nickname
