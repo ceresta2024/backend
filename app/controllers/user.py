@@ -15,6 +15,8 @@ from app.schemas.user import (
     ChangePassword,
     SetJob,
     GetReward,
+    ItemList,
+    JobList,
 )
 from app.utils.common import (
     id_generator,
@@ -22,6 +24,7 @@ from app.utils.common import (
     verify_password,
     create_refresh_token,
     get_hashed_password,
+    get_list_of_dict,
 )
 from app.utils.const import SCORES_PER_BOX
 
@@ -190,11 +193,23 @@ class UserController:
         }
 
     def get_jobs(self):
-        return (
-            self.session.query(Job)
-            .options(load_only(Job.id, Job.name, Job.description))
-            .all()
-        )
+        rows = self.session.query(
+            Job.id, Job.name, Job.description, Job.speed, Job.allow_gold
+        ).all()
+        jobs = get_list_of_dict(JobList.__fields__.keys(), rows)
+        for job in jobs:
+            records = self.session.query(
+                Item.id,
+                Item.name,
+                Item.description,
+                Item.price,
+                Item.hp,
+                Item.sp,
+                Item.img_path,
+            ).filter(Item.type == job["id"])
+            items = get_list_of_dict(ItemList.__fields__.keys(), records)
+            job["items"] = items
+        return jobs
 
     def set_job(self, request: SetJob, user_id: int):
         job = self.session.query(Job).filter(Job.id == request.job_id).first()
