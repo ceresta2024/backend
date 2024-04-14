@@ -26,7 +26,10 @@ from app.utils.common import (
     get_hashed_password,
     get_list_of_dict,
 )
-from app.utils.const import SCORES_PER_BOX
+from app.utils.const import (
+    SCORES_PER_BOX,
+    ITEM_TYPE_JOB_REQUIREMENT,
+)
 
 
 class UserController:
@@ -206,7 +209,7 @@ class UserController:
                 Item.hp,
                 Item.sp,
                 Item.img_path,
-            ).filter(Item.type == 2, Item.job_id == job["id"])
+            ).filter(Item.type == ITEM_TYPE_JOB_REQUIREMENT, Item.job_id == job["id"])
             items = get_list_of_dict(ItemList.__fields__.keys(), records)
             job["items"] = items
         return jobs
