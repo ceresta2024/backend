@@ -206,7 +206,7 @@ class UserController:
                 Item.hp,
                 Item.sp,
                 Item.img_path,
-            ).filter(Item.type == job["id"])
+            ).filter(Item.type == 2, Item.job_id == job["id"])
             items = get_list_of_dict(ItemList.__fields__.keys(), records)
             job["items"] = items
         return jobs
