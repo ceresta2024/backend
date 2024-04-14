@@ -13,8 +13,6 @@ def insert_do_nothing_on_conflicts(table, conn, cols, data_iter):
 
 
 def populate_shop_data(df):
-    data_top = df.columns
-    print(data_top)
     # remove unmatched columns to shop db
     for column in list(df.columns.values):
         if column not in ("created", "updated", "id", "price"):
