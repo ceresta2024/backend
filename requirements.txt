@@ -16,4 +16,5 @@ pydantic[email]
 pandas==2.2.1
 openpyxl==3.1.2
 schedule==1.2.1
+fastapi-sso==0.14.0
 keyvalue-sqlite==1.0.7
