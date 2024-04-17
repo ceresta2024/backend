@@ -22,11 +22,6 @@ from app.utils.auth_bearer import JWTBearer, decodeJWT
 router = APIRouter()
 namespace = "user"
 
-
-
-
-
-
 from fastapi_sso.sso.google import GoogleSSO
 
 CLIENT_ID = "88063403687-6nn4713fc3bb9jpgc9ckj6umhkkfeao1.apps.googleusercontent.com"
@@ -34,7 +29,11 @@ CLIENT_SECRET = "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"
 
 
 def get_google_sso() -> GoogleSSO:
-    return GoogleSSO(CLIENT_ID, CLIENT_SECRET, redirect_uri="http://localhost:8000/user/google_callback")
+    return GoogleSSO(
+        CLIENT_ID,
+        CLIENT_SECRET,
+        redirect_uri="http://localhost:8000/user/google_callback",
+    )
 
 
 @router.get("/google_login")
@@ -43,12 +42,11 @@ async def google_login(google_sso: GoogleSSO = Depends(get_google_sso)):
 
 
 @router.get("/google_callback")
-async def google_callback(request: RequestDetails, google_sso: GoogleSSO = Depends(get_google_sso)):
+async def google_callback(
+    request: RequestDetails, google_sso: GoogleSSO = Depends(get_google_sso)
+):
     user = await google_sso.verify_and_process(request)
     return user
-
-
-
 
 
 def token_required(func):
