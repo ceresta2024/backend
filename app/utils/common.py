@@ -1,3 +1,5 @@
+import ast
+import json
 import random
 import string
 
@@ -7,6 +9,7 @@ from typing import Union, Any
 from jose import jwt
 
 from app.config import settings
+from app.utils.auth_bearer import decodeJWT
 from app.utils.const import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     REFRESH_TOKEN_EXPIRE_MINUTES,
@@ -51,6 +54,13 @@ def create_refresh_token(subject: Union[str, Any], expires_delta: int = None) ->
     to_encode = {"exp": expires_delta, "sub": str(subject)}
     encoded_jwt = jwt.encode(to_encode, settings.JWT_REFRESH_SECRET_KEY, ALGORITHM)
     return encoded_jwt
+
+
+def get_user_data(token):
+    sub = decodeJWT(token)["sub"]
+    if sub.find("username") > 0:
+        return json.loads(sub.replace("'", '"'))
+    return {"user_id": sub}
 
 
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):

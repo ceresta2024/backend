@@ -8,7 +8,7 @@ from app.models.notice import Notice
 from sqlalchemy.dialects.postgresql import insert
 
 
-FILE_PATH = "app/scripts/jobs.xlsx"
+FILE_PATH = "app/scripts/data/jobs.xlsx"
 
 ### Jobs Sheet
 COLUMN_JOB_NO = "No"
@@ -139,7 +139,7 @@ def populate_job_data():
     ### import jobs
     df_jobs = validate_sheet_data(df_jobs, VALIDATION_JOB_COLUMNS, REMOVAL_JOB_COLUMNS)
     JOB_NAMES = dict(
-        zip(df_jobs[COLUMN_JOB_NAME], range(1, len(df_jobs[COLUMN_JOB_NAME])))
+        zip(df_jobs[COLUMN_JOB_NAME], range(1, len(df_jobs[COLUMN_JOB_NAME]) + 1))
     )
     import_excel_data(df_jobs, Job.__tablename__, MAP_JOB_COLUMNS)
 
@@ -159,3 +159,5 @@ def populate_job_data():
     import_excel_data(
         df_notices, Notice.__tablename__, MAP_NOTICE_COLUMNS, UPDATE_NOTICE_COLUMNS
     )
+
+    return JOB_NAMES

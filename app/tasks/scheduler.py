@@ -5,11 +5,7 @@ from datetime import datetime
 from threading import Thread
 
 from app.tasks import celery
-
-
-@celery.task(name="app.tasks.get_maze_opening_time")
-def get_maze_opening_time():
-    return datetime.utcnow()
+from app.utils import GAME
 
 
 @celery.task(name="app.tasks.create_task")
@@ -25,8 +21,12 @@ class BackgroundTasks:
     def check_live(self):
         print("Server is live")
 
+    def initalize_game_data(self):
+        if datetime.utcnow() > GAME.down_time:
+            GAME.reset()
+
     def init_schedule_jobs(self):
-        schedule.every(1).minutes.do(self.check_live)
+        schedule.every(1).minutes.do(self.initalize_game_data)
 
     def run_schedule_jobs(self):
         while True:

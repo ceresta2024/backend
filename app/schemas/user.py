@@ -72,3 +72,22 @@ class TokenCreate(BaseModel):
 
 class GetReward(BaseModel):
     box_id: int = Field(ge=0, le=3)
+
+
+class ItemList(BaseModel):
+    id: int
+    name: str
+    description: str
+    price: int
+    hp: int
+    sp: int
+    img_path: str
+
+
+class JobList(BaseModel):
+    id: int
+    name: str
+    description: str
+    speed: int
+    allow_gold: int
+    items: list[ItemList]
