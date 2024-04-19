@@ -231,28 +231,34 @@ class UserController:
         # Check if user is already set as this job
         if user.job_id == job.id:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=f"User already set as {job.name}"
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"User already set as {job.name}",
             )
 
         # Check if user is eligible for setting job
         if user.game_money < job.allow_gold:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="User's game money insufficient"
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User's game money insufficient",
             )
-        items = self.session.query(Item.id, Item.name).filter(Item.type == ITEM_TYPE_JOB_REQUIREMENT, Item.job_id == job.id)
+        items = self.session.query(Item.id, Item.name).filter(
+            Item.type == ITEM_TYPE_JOB_REQUIREMENT, Item.job_id == job.id
+        )
         item_list = dict((item.id, item.name) for item in items)
-        inven = (
-            self.session.query(Inventory)
-            .filter(Inventory.user_id == user.id, Inventory.item_id.in_(item_list), Inventory.quantity > 0)
+        inven = self.session.query(Inventory).filter(
+            Inventory.user_id == user.id,
+            Inventory.item_id.in_(item_list),
+            Inventory.quantity > 0,
         )
         inven_item_list = dict((inv.item_id, inv.quantity) for inv in inven)
         diff_item_ids = list(set(item_list.keys()) - set(inven_item_list.keys()))
         if len(diff_item_ids) > 0:
             diff_item_names = [v for k, v in item_list.items() if k in diff_item_ids]
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=f"User inventory item insufficient: {', '.join(diff_item_names)}"
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"User inventory item insufficient: {', '.join(diff_item_names)}",
             )
-        
+
         # Set user job and update user game_money and inventory item
         user.game_money -= job.allow_gold
         user.job_id = request.job_id
