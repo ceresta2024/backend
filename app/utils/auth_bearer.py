@@ -7,6 +7,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.config import settings
 from app.utils.const import (
     ALGORITHM,
+    SESSION_COOKIE_NAME,
 )
 
 
@@ -25,6 +26,11 @@ class JWTBearer(HTTPBearer):
         super(JWTBearer, self).__init__(auto_error=auto_error)
 
     async def __call__(self, request: Request):
+        cookie = request.cookies.get(SESSION_COOKIE_NAME)
+        if cookie:
+            if self.verify_jwt(cookie):
+                return cookie
+
         credentials: HTTPAuthorizationCredentials = await super(
             JWTBearer, self
         ).__call__(request)

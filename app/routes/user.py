@@ -1,5 +1,8 @@
 # routes/user.py
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
+from fastapi.responses import RedirectResponse
+from starlette.requests import Request
+
 from sqlalchemy.orm import Session
 from functools import wraps
 
@@ -18,35 +21,21 @@ from app.schemas.user import (
     GetReward,
 )
 from app.utils.auth_bearer import JWTBearer, decodeJWT
+from app.utils.const import (
+    HOST_URL,
+    SESSION_COOKIE_NAME,
+    GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET,
+)
+
+from fastapi_sso.sso.google import GoogleSSO
 
 router = APIRouter()
 namespace = "user"
 
-from fastapi_sso.sso.google import GoogleSSO
-
-CLIENT_ID = "88063403687-6nn4713fc3bb9jpgc9ckj6umhkkfeao1.apps.googleusercontent.com"
-CLIENT_SECRET = "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"
-
-
-def get_google_sso() -> GoogleSSO:
-    return GoogleSSO(
-        CLIENT_ID,
-        CLIENT_SECRET,
-        redirect_uri="http://localhost:8000/user/google_callback",
-    )
-
-
-@router.get("/google_login")
-async def google_login(google_sso: GoogleSSO = Depends(get_google_sso)):
-    return await google_sso.get_login_redirect()
-
-
-@router.get("/google_callback")
-async def google_callback(
-    request: RequestDetails, google_sso: GoogleSSO = Depends(get_google_sso)
-):
-    user = await google_sso.verify_and_process(request)
-    return user
+google_sso = GoogleSSO(
+    GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, f"{HOST_URL}/user/google_callback"
+)
 
 
 def token_required(func):
@@ -65,6 +54,29 @@ def token_required(func):
     return wrapper
 
 
+@router.get("/google_login", tags=["Google SSO"])
+async def google_login():
+    with google_sso:
+        return await google_sso.get_login_redirect(
+            params={"prompt": "consent", "access_type": "offline"}
+        )
+
+
+@router.get("/google_callback", tags=["Google SSO"])
+async def google_callback(request: Request, session: Session = Depends(get_session)):
+    with google_sso:
+        user = await google_sso.verify_and_process(request)
+    user_info = UserCreate(
+        username=user.display_name,
+        email=user.email,
+        password=user.provider + user.first_name,
+    )
+    access_token = UserController(session).callback_sso(user_info, user.provider)
+    response = RedirectResponse(url="/admin/", status_code=status.HTTP_302_FOUND)
+    response.set_cookie(SESSION_COOKIE_NAME, access_token)
+    return response
+
+
 @router.post("/register/")
 async def register(user: UserCreate, session: Session = Depends(get_session)):
     return UserController(session).register(user)
@@ -78,7 +90,10 @@ async def login(request: RequestDetails, session: Session = Depends(get_session)
 @router.post("/logout")
 def logout(token=Depends(JWTBearer()), session: Session = Depends(get_session)):
     user_id = decodeJWT(token)["sub"]
-    return UserController(session).logout(token, user_id)
+    UserController(session).logout(token, user_id)
+    response = RedirectResponse(url="/admin/", status_code=status.HTTP_302_FOUND)
+    response.delete_cookie(SESSION_COOKIE_NAME)
+    return response
 
 
 @router.post("/getinfo", response_model=UserInfo)

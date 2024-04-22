@@ -1,0 +1,144 @@
+body {
+  font-family: 'Geneva', Arial, Helvetica, sans-serif;
+  text-align: center;
+  font-size: large;
+}
+
+input[type=text],
+input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+}
+
+button {
+  background-color: #27a9e1;
+  color: white;
+  padding: 15px;
+  margin: 10px 10px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  vertical-align: bottom;
+}
+
+button[disabled] {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+.login-btn {
+  border-radius: 3px;
+}
+
+.login-container {
+  height: 100vh;
+  display: flex;
+  vertical-align: middle;
+  justify-content: center;
+  align-items: center;
+}
+
+.signup_or_sso {
+  position: relative;
+  text-align: center;
+}
+
+.signup-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: #27a9e1;
+  text-decoration: none;
+  align-content: center;
+}
+
+.signup-link:hover {
+  text-decoration: underline;
+}
+
+#continue_with_sso {
+  padding: 10px 0px 5px 0px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  justify-content: space-between;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.logout {
+  display: flex;
+  align-items: center;
+}
+
+.username {
+  margin: 0;
+}
+
+.users-table {
+  flex-grow: 1;
+  overflow: auto;
+  padding: 10px;
+}
+
+.footer {
+  text-align: right;
+  margin-top: auto;
+}
+
+.version-container {
+  display: inline-block;
+  bottom: 0;
+  right: 0;
+  padding: 10px;
+}
+
+.version-table th {
+  text-align: left;
+  padding: 5px 10px;
+}
+
+.version-table td {
+  padding: 5px 10px;
+}
+
+@media only screen and (max-width: 990px) {
+  .footer{
+    text-align: center;
+  }
+
+  .version-container {
+      position: static;
+      margin-bottom: 20px;
+  }
+
+  .login-container {
+    display: block;
+    align-items: center;
+    margin: 10%;
+  }
+
+  .row.mt-3 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .row.mt-3 form {
+    flex: 0 0 calc(50% - 20px);
+    margin: 10px;
+  }
+}

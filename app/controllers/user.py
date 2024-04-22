@@ -65,6 +65,41 @@ class UserController:
         self.session.refresh(new_user)
         return {"message": "user created successfully"}
 
+    def callback_sso(self, user: UserCreate, provider: str):
+        existing_user = (
+            self.session.query(User).filter_by(user_name=user.username).first()
+        )
+        if existing_user:
+            raise HTTPException(status_code=400, detail="User name already registered")
+        existing_user = self.session.query(User).filter_by(email=user.email).first()
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Email already registered")
+
+        # Create new user from google
+        encrypted_password = get_hashed_password(user.password)
+        new_user = User(
+            user_name=user.username, email=user.email, password=encrypted_password
+        )
+        self.session.add(new_user)
+        self.session.flush()
+        self.session.commit()
+        self.session.refresh(new_user)
+
+        # Create access token
+        access_token = create_access_token(new_user.id)
+        refresh_token = create_refresh_token(new_user.id)
+        token_db = TokenTable(
+            user_id=new_user.id,
+            access_token=access_token,
+            refresh_token=refresh_token,
+            status=True,
+        )
+        self.session.add(token_db)
+        self.session.commit()
+        self.session.refresh(token_db)
+
+        return access_token
+
     def login(self, request: RequestDetails):
         user = self.session.query(User).filter(User.email == request.email).first()
         if user is None:
@@ -77,17 +112,20 @@ class UserController:
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect password"
             )
 
-        access = create_access_token(user.id)
-        refresh = create_refresh_token(user.id)
+        access_token = create_access_token(user.id)
+        refresh_token = create_refresh_token(user.id)
 
         token_db = TokenTable(
-            user_id=user.id, access_token=access, refresh_token=refresh, status=True
+            user_id=user.id,
+            access_token=access_token,
+            refresh_token=refresh_token,
+            status=True,
         )
         self.session.add(token_db)
         self.session.commit()
         self.session.refresh(token_db)
 
-        return {**user.info, "access_token": access}
+        return {**user.info, "access_token": access_token}
 
     def logout(self, token: str, user_id: int):
         token_record = self.session.query(TokenTable).all()
