@@ -4,8 +4,7 @@ from sqlalchemy.sql import func
 from fastapi import HTTPException, status
 
 from app.utils import GAME
-
-from app.utils.auth_bearer import decodeJWT
+from app.scripts.import_items import ITEM_LEVEL
 
 from app.schemas.game import RewardRequest, RewardResponse, RoomResponse
 
@@ -46,7 +45,8 @@ class GameController:
         return RoomResponse(room_id=room_id, map_id=map_id)
 
     def get_reward(self, reward: RewardRequest, user_data) -> RewardResponse:
-        if GAME.validate_reward(reward, user_data):
+        user_id = user_data.get("user_id", user_data.get("username"))
+        if not GAME.validate_reward(reward, user_id):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Not Found items"
             )
@@ -54,13 +54,13 @@ class GameController:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Insufficient items"
             )
-
-        is_nickname = user_data.get("username")
+        GAME.rooms[reward.room_id]["winners"].append(user_id)
 
         # Get item randomly
+        item_level = ITEM_LEVEL.get(reward.box_type.capitalize())
         item = (
             self.session.query(Item)
-            .filter_by(type=reward.box_type)
+            .filter_by(level=item_level)
             .order_by(func.random())
             .first()
         )
@@ -69,12 +69,11 @@ class GameController:
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Not Found items"
             )
 
+        is_nickname = user_data.get("username")
         if (
             is_nickname
         ):  # Return reward info without logging in useritemlog and inventory for nicknam user
             return RewardResponse(id=item.id, name=item.name, price=item.price)
-
-        user_id = user_data["user_id"]
 
         # Add log in useritemlog
         new_log = UserItemLog(user_id=user_id, item_id=item.id)
