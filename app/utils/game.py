@@ -34,7 +34,7 @@ class Game:
     def add_room(self, room_name, user_data):
         room_id = "RM_" + id_generator()
         map_id = 0
-        user_id = user_data.get("user_id", user_data["username"])
+        user_id = user_data.get("user_id", user_data.get("username"))
         self.rooms[room_id] = {
             "name": room_name,
             "map_id": map_id,
@@ -51,7 +51,7 @@ class Game:
         return room_id, map_id
 
     def add_user(self, room_id, user_data):
-        user_id = user_data.get("user_id", user_data["username"])
+        user_id = user_data.get("user_id", user_data.get("username"))
         if room_id not in self.rooms:
             return room_id, None
         self.rooms[room_id]["users"].append(user_id)
@@ -68,8 +68,7 @@ class Game:
             return True
         return False
 
-    def validate_reward(self, reward: RewardRequest, user_data):
-        user_id = user_data.get("user_id", user_data["username"])
+    def validate_reward(self, reward: RewardRequest, user_id):
         room_id = reward.room_id
         if room_id not in self.rooms:
             return False
@@ -79,5 +78,4 @@ class Game:
             return False
         if user_id in self.rooms[room_id]["winners"]:
             return False
-        self.rooms[room_id]["winners"].append(room_id)
         return True
