@@ -1,8 +1,5 @@
-from datetime import datetime
-
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy import select
 
 from app.models.inventory import Inventory
 from app.models.item import Item

@@ -1,11 +1,9 @@
 # routes/shop.py
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.models import Item
 
 from app.controllers import ShopController
 from app.models.base import get_session
-from app.models.item import Item
 from app.schemas.shop import RequestBuyItem, RequestSellItem
 from app.utils.auth_bearer import JWTBearer, decodeJWT
 

@@ -8,17 +8,14 @@ from functools import wraps
 
 from app.controllers import UserController
 from app.models.base import get_session
-from app.models.user import User
 
 from app.schemas.user import (
     UserCreate,
-    TokenSchema,
     LoginUserInfo,
     UserInfo,
     RequestDetails,
     ChangePassword,
     SetJob,
-    GetReward,
 )
 from app.utils.auth_bearer import JWTBearer, decodeJWT
 from app.utils.const import (

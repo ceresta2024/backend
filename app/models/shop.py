@@ -3,7 +3,6 @@ from datetime import datetime
 from sqlalchemy import Column, DateTime, Integer, ForeignKey, orm
 
 from .base import Base
-from .item import Item
 
 
 class Shop(Base):
