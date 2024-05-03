@@ -1,9 +1,10 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, load_only
 from sqlalchemy.sql import func
 
 from fastapi import HTTPException, status
 
 from app.utils import GAME
+from app.utils.const import SCORES_PER_BOX
 from app.scripts.import_items import ITEM_LEVEL
 
 from app.schemas.game import RewardRequest, RewardResponse, RoomResponse
@@ -60,6 +61,13 @@ class GameController:
         item_level = ITEM_LEVEL.get(reward.box_type.capitalize())
         item = (
             self.session.query(Item)
+            .options(
+                load_only(
+                    Item.id,
+                    Item.name,
+                    Item.price,
+                )
+            )
             .filter_by(level=item_level)
             .order_by(func.random())
             .first()
@@ -69,14 +77,27 @@ class GameController:
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Not Found items"
             )
 
+        score = SCORES_PER_BOX[item_level]
         is_nickname = user_data.get("username")
         if (
             is_nickname
         ):  # Return reward info without logging in useritemlog and inventory for nicknam user
-            return RewardResponse(id=item.id, name=item.name, price=item.price)
+            return RewardResponse(
+                user_score=score, item_id=item.id, name=item.name, price=item.price
+            )
+
+        user = self.session.query(User).filter(User.id == user_id).first()
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="User not found"
+            )
+
+        new_score = user.score + score
+        user.score = new_score
+        self.session.commit()
 
         # Add log in useritemlog
-        new_log = UserItemLog(user_id=user_id, item_id=item.id)
+        new_log = UserItemLog(user_id=user_id, item_id=item.id, score=score)
         self.session.add(new_log)
         self.session.commit()
         self.session.refresh(new_log)
@@ -94,4 +115,6 @@ class GameController:
             inven.quantity += 1
             self.session.commit()
 
-        return RewardResponse(id=item.id, name=item.name, price=item.price)
+        return RewardResponse(
+            user_score=new_score, item_id=item.id, name=item.name, price=item.price
+        )
