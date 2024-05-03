@@ -24,6 +24,7 @@ class RewardRequest(BaseModel):
 
 
 class RewardResponse(BaseModel):
-    id: int
+    user_score: int
+    item_id: int
     name: str
     price: int

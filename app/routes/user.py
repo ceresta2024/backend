@@ -159,13 +159,3 @@ async def set_job(
 @router.get("/get_notice/")
 async def get_notice(session: Session = Depends(get_session)):
     return UserController(session).get_notice()
-
-
-@router.post("/get_reward/")
-async def get_reward(
-    request: GetReward,
-    token=Depends(JWTBearer()),
-    session: Session = Depends(get_session),
-):
-    user_id = decodeJWT(token)["sub"]
-    return UserController(session).get_reward(request, user_id)
