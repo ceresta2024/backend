@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.controllers import GameController
 from app.models.base import get_session
-from app.schemas.game import NewRoomRequest, RewardRequest
+from app.schemas.game import RewardRequest
 
 from app.utils.auth_bearer import JWTBearer
 from app.utils.common import get_user_data

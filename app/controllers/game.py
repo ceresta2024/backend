@@ -9,7 +9,7 @@ from app.scripts.import_items import ITEM_LEVEL
 
 from app.schemas.game import RewardRequest, RewardResponse, RoomResponse
 
-from app.models.user import User, TokenTable
+from app.models.user import User
 from app.models.item import Item
 from app.models.inventory import Inventory
 from app.models.user_item_log import UserItemLog
