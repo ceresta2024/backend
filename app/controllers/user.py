@@ -251,7 +251,7 @@ class UserController:
             ).filter(Item.type == ITEM_TYPE_JOB_REQUIREMENT, Item.job_id == job["id"])
             items = get_list_of_dict(ItemList.__fields__.keys(), records)
             job["items"] = items
-        return jobs
+        return {"data": jobs}
 
     def set_job(self, request: SetJob, user_id: int):
         job = self.session.query(Job).filter(Job.id == request.job_id).first()
