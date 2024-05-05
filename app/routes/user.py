@@ -26,9 +26,12 @@ from app.utils.const import (
     SESSION_COOKIE_NAME,
     GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET,
+    FACEBOOK_CLIENT_ID,
+    FACEBOOK_CLIENT_SECRET,
 )
 
 from fastapi_sso.sso.google import GoogleSSO
+from fastapi_sso.sso.facebook import FacebookSSO
 
 router = APIRouter()
 namespace = "user"
@@ -66,6 +69,33 @@ async def google_login():
 async def google_callback(request: Request, session: Session = Depends(get_session)):
     with google_sso:
         user = await google_sso.verify_and_process(request)
+    user_info = UserCreate(
+        username=user.display_name,
+        email=user.email,
+        password=user.provider + user.first_name,
+    )
+    access_token = UserController(session).callback_sso(user_info, user.provider)
+    response = RedirectResponse(url="/admin/", status_code=status.HTTP_302_FOUND)
+    response.set_cookie(SESSION_COOKIE_NAME, access_token)
+    return response
+
+
+facebook_sso = FacebookSSO(
+    FACEBOOK_CLIENT_ID, FACEBOOK_CLIENT_SECRET, f"{HOST_URL}/user/facebook_callback"
+)
+
+
+@router.get("/facebook_login", tags=["Facebook SSO"])
+async def facebook_login():
+    with facebook_sso:
+        return await facebook_sso.get_login_redirect()
+
+
+@router.get("/facebook_callback", tags=["Facebook SSO"])
+async def facebook_callback(request: Request, session: Session = Depends(get_session)):
+    """Process login response from Facebook and return user info"""
+    with facebook_sso:
+        user = await facebook_sso.verify_and_process(request)
     user_info = UserCreate(
         username=user.display_name,
         email=user.email,

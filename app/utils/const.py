@@ -1,4 +1,5 @@
 HOST_URL = "https://backend-test-k12i.onrender.com"
+# HOST_URL = "http://localhost:9999"
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 1 day
 REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
@@ -10,6 +11,8 @@ GOOGLE_CLIENT_ID = (
     "88063403687-uhnfeum8hfdkb6nkp3h99eibkcf9nts3.apps.googleusercontent.com"
 )
 GOOGLE_CLIENT_SECRET = "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"
+FACEBOOK_CLIENT_ID = "1095133491777773"
+FACEBOOK_CLIENT_SECRET = "574df4c91462b4dcff3e3e2fa2571883"
 
 # Game
 GAME_LAUNCH_PERIOD = 2  # Every 2 hours
