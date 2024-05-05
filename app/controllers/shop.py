@@ -1,8 +1,5 @@
-from datetime import datetime
-
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy import select
 
 from app.models.inventory import Inventory
 from app.models.item import Item
@@ -18,7 +15,7 @@ class ShopController:
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    def get_store_list(self, keyword: str) -> list:
+    def get_store_list(self, keyword: str) -> dict:
         filter_args = []
         filter_args.append(Shop.quantity > 0)
         if keyword:
@@ -29,9 +26,10 @@ class ShopController:
             .filter(*filter_args)
             .all()
         )
-        return get_list_of_dict(StoreList.__fields__.keys(), data)
+        items = get_list_of_dict(StoreList.__fields__.keys(), data)
+        return {"data": items}
 
-    def get_inventory_list(self, user_id: int, keyword: str) -> list:
+    def get_inventory_list(self, user_id: int, keyword: str) -> dict:
         filter_args = [Inventory.user_id == user_id, Inventory.quantity > 0]
         if keyword:
             filter_args.append(Item.name.ilike(f"%{keyword}%"))
@@ -47,7 +45,7 @@ class ShopController:
         items = get_list_of_dict(InventoryList.__fields__.keys(), data)
         for item in items:
             item["price"] = int(item["price"] * BUY_SELL_RATIO)
-        return items
+        return {"data": items}
 
     def buy_item(self, request: RequestBuyItem, user_id: int):
         shop_item = (

@@ -4,9 +4,8 @@ import pandas as pd
 
 from sqlalchemy.dialects.postgresql import insert
 
-from app.models.base import engine, get_session
+from app.models.base import engine
 from app.models.item import Item
-from app.models.shop import Shop
 
 
 FILE_PATH = "app/scripts/data/items.xlsx"

@@ -18,12 +18,13 @@ class RoomResponse(BaseModel):
 
 
 class RewardRequest(BaseModel):
-    room_id: int
+    room_id: str
     map_id: int
-    box_type: int
+    box_type: str
 
 
 class RewardResponse(BaseModel):
-    id: int
+    user_score: int
+    item_id: int
     name: str
     price: int

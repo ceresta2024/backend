@@ -3,8 +3,6 @@ from datetime import datetime
 from sqlalchemy import Column, DateTime, Integer, ForeignKey, orm
 
 from .base import Base
-from .user import User
-from .item import Item
 
 
 class UserItemLog(Base):
