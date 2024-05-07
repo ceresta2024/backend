@@ -52,6 +52,7 @@ class Job(Base):
     description = Column(Text, nullable=False)
     allow_gold = Column(Integer, default=DEFAULT_ALLOW_GOLD, nullable=False)
     speed = Column(Integer, default=DEFAULT_SPEED, nullable=False)
+    enabled = Column(Boolean, default=True)
     created = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated = Column(DateTime, default=datetime.utcnow, nullable=False)
 
