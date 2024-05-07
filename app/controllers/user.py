@@ -231,9 +231,13 @@ class UserController:
         }
 
     def get_jobs(self):
-        rows = self.session.query(
-            Job.id, Job.name, Job.description, Job.speed, Job.allow_gold
-        ).all()
+        rows = (
+            self.session.query(
+                Job.id, Job.name, Job.description, Job.speed, Job.allow_gold
+            )
+            .filter(Job.id > 0, Job.enabled == True)
+            .all()
+        )
         jobs = get_list_of_dict(JobList.__fields__.keys(), rows)
         for job in jobs:
             records = self.session.query(

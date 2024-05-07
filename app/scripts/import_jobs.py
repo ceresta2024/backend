@@ -16,12 +16,14 @@ COLUMN_JOB_NAME = "Job Name"
 COLUMN_JOB_DESC = "Job Description"
 COLUMN_JOB_GOLD = "Allowed Gold"
 COLUMN_JOB_SPEED = "Speed"
+COLUMN_JOB_ENABLED = "Enabled"
 MAP_JOB_COLUMNS = {
     COLUMN_JOB_NO: "id",
     COLUMN_JOB_NAME: "name",
     COLUMN_JOB_DESC: "description",
     COLUMN_JOB_GOLD: "allow_gold",
     COLUMN_JOB_SPEED: "speed",
+    COLUMN_JOB_ENABLED: "enabled",
 }
 VALIDATION_JOB_COLUMNS = [COLUMN_JOB_NAME]
 REMOVAL_JOB_COLUMNS = []
