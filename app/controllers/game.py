@@ -25,6 +25,14 @@ class GameController:
     def is_opened(self) -> dict:
         return {"opened": GAME.is_opened()}
 
+    def get_room_list(self):
+        if not GAME.is_opened():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Request"
+            )
+        rooms = GAME.get_room_list()
+        return {"data": rooms}
+
     def add_room(self, room_name, user_data) -> RoomResponse:
         if not GAME.is_opened():
             raise HTTPException(

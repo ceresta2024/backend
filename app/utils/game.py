@@ -4,6 +4,8 @@ from app.schemas.game import RewardRequest
 from app.utils import const
 from app.utils.common import id_generator
 
+INITIAL_ROOM_COUNT = 12
+
 
 class Game:
     def __init__(self):
@@ -31,9 +33,32 @@ class Game:
         normal_now = now.replace(minute=0, second=0, microsecond=0)
         return normal_now + timedelta(hours=diff_hour)
 
+    def get_room_list(self):
+        if len(self.rooms) < INITIAL_ROOM_COUNT:
+            for _ in range(INITIAL_ROOM_COUNT):
+                room_id = "RM_" + id_generator()
+                map_id = 3
+                self.rooms[room_id] = {
+                    "map_id": map_id,
+                    "users": [],
+                    "winners": [],
+                    "itembox": {
+                        "opened": 0,
+                        "high": 0,
+                        "medium": 0,
+                        "low": 0,
+                    },
+                }
+            self.room_count = INITIAL_ROOM_COUNT
+        rooms = [
+            {"room_id": room_id, "map_id": room["map_id"]}
+            for room_id, room in self.rooms.items()
+        ]
+        return rooms
+
     def add_room(self, room_name, user_data):
         room_id = "RM_" + id_generator()
-        map_id = 0
+        map_id = 3
         user_id = user_data.get("user_id", user_data.get("username"))
         self.rooms[room_id] = {
             "name": room_name,

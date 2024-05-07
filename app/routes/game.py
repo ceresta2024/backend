@@ -23,6 +23,14 @@ async def is_opened(session: Session = Depends(get_session)):
     return GameController(session).is_opened()
 
 
+@router.post("/get_roomlist/")
+async def get_roomlist(
+    token=Depends(JWTBearer()),
+    session: Session = Depends(get_session),
+):
+    return GameController(session).get_room_list()
+
+
 @router.post("/add_room/")
 async def add_room(
     room_name: str,
