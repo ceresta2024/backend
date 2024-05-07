@@ -44,7 +44,7 @@ class UserInfo(BaseModel):
     email: str = Field(min_length=5)
     gold: int
     score: int
-    job_id: Optional[int] = Field(nullable=True)
+    job: str = Field(nullable=True)
     status: Optional[int] = Field(nullable=True)
 
 

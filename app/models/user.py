@@ -4,6 +4,7 @@ from sqlalchemy import Column, DateTime, Integer, String, Boolean, Text
 
 from .base import Base
 
+from app.utils import JOBS
 from app.utils.const import DEFAULT_ALLOW_GOLD, DEFAULT_SPEED
 
 
@@ -29,7 +30,7 @@ class User(Base):
             "email": self.email,
             "gold": self.game_money,
             "score": self.score,
-            "job_id": self.job_id,
+            "job": JOBS["ID_TO_NAME"].get(self.job_id, ""),
             "status": self.status,
         }
 

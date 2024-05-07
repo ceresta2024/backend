@@ -2,3 +2,4 @@
 from app.utils.game import Game
 
 GAME = Game()
+JOBS = {}
