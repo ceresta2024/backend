@@ -8,6 +8,7 @@ load_dotenv()
 
 
 class Config:
+    ENV = os.environ.get("ENV", "development")
     DATABASE_URL = os.environ.get(
         "DATABASE_URL", "postgresql://user:password@localhost:port/dbname"
     )

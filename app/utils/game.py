@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from random import choice
 
+from app.config import settings
 from app.schemas.game import RewardRequest
 from app.utils import const
 from app.utils.common import id_generator
@@ -28,12 +29,17 @@ class Game:
 
     def get_launch_time(self):
         now = datetime.utcnow()
-        next_hour = (
-            now.hour // const.GAME_LAUNCH_PERIOD + 1
-        ) * const.GAME_LAUNCH_PERIOD
-        diff_hour = next_hour - now.hour
-        normal_now = now.replace(minute=0, second=0, microsecond=0)
-        return normal_now + timedelta(hours=diff_hour)
+        if settings.ENV == "dev":
+            min = (now.minute // 10) * 10
+            normal_now = now.replace(minute=min, second=0, microsecond=0)
+            return normal_now + timedelta(minutes=10)
+        else:
+            next_hour = (
+                now.hour // const.GAME_LAUNCH_PERIOD + 1
+            ) * const.GAME_LAUNCH_PERIOD
+            diff_hour = next_hour - now.hour
+            normal_now = now.replace(minute=0, second=0, microsecond=0)
+            return normal_now + timedelta(hours=diff_hour)
 
     def set_weather(self):
         self.weather = choice(const.WEATHER)

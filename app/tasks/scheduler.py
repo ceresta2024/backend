@@ -4,6 +4,7 @@ import time
 from datetime import datetime
 from threading import Thread
 
+from app.config import settings
 from app.tasks import celery
 from app.utils import GAME
 
@@ -30,7 +31,8 @@ class BackgroundTasks:
 
     def init_schedule_jobs(self):
         schedule.every(1).minutes.do(self.initalize_game_data)
-        schedule.every(10).minutes.do(self.reset_weather)  # for testing.
+        if settings.ENV == "dev":
+            schedule.every(10).minutes.do(self.reset_weather)
 
     def run_schedule_jobs(self):
         while True:
