@@ -97,6 +97,19 @@ class Game:
             return True
         return False
 
+    def get_box_type(self, room_id):
+        opened_boxes = self.rooms[room_id]["itembox"]["opened"]
+        if opened_boxes >= const.TOTAL_ITEMBOX_COUNT:
+            return None
+
+        for box_type, box_count in const.ITEMBOX_COUNT.items():
+            if opened_boxes < box_count:
+                self.rooms[room_id]["itembox"]["opened"] += 1
+                return box_type
+            opened_boxes -= box_count
+
+        return None
+
     def update_itembox(self, room_id, box_level):
         itembox = self.rooms[room_id]["itembox"]
         if itembox["opened"] >= const.TOTAL_ITEMBOX_COUNT:

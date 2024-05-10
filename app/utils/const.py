@@ -30,8 +30,8 @@ ITEMBOX_HIGH = "high"
 
 ITEMBOX_COUNT = {
     ITEMBOX_HIGH: 1,
-    ITEMBOX_MEDIUM: 3,
-    ITEMBOX_LOW: 6,
+    ITEMBOX_MEDIUM: 2,
+    ITEMBOX_LOW: 3,
 }
 
 TOTAL_ITEMBOX_COUNT = sum(count for count in ITEMBOX_COUNT.values())
