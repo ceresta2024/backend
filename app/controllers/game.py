@@ -53,6 +53,14 @@ class GameController:
             )
         return RoomResponse(room_id=room_id, map_id=map_id)
 
+    def remove_user(self, room_id, user_data):
+        if not GAME.is_opened():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Request"
+            )
+        res = GAME.remove_user(room_id, user_data)
+        return {"success": res}
+
     def get_reward(self, reward: RewardRequest, user_data) -> RewardResponse:
         user_id = user_data.get("user_id", user_data.get("username"))
         if not GAME.validate_reward(reward, user_id):

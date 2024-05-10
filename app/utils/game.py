@@ -88,6 +88,15 @@ class Game:
         self.rooms[room_id]["users"].append(user_id)
         return room_id, self.rooms[room_id]["map_id"]
 
+    def remove_user(self, room_id, user_data):
+        user_id = user_data.get("user_id", user_data.get("username"))
+        if room_id not in self.rooms:
+            return False
+        if user_id in self.rooms[room_id]["users"]:
+            self.rooms[room_id]["users"].remove(user_id)
+            return True
+        return False
+
     def update_itembox(self, room_id, box_level):
         itembox = self.rooms[room_id]["itembox"]
         if itembox["opened"] >= const.TOTAL_ITEMBOX_COUNT:

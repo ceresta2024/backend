@@ -51,6 +51,16 @@ async def add_user(
     return GameController(session).add_user(room_id, user_data)
 
 
+@router.post("/remove_user/")
+async def add_user(
+    room_id: str,
+    token=Depends(JWTBearer()),
+    session: Session = Depends(get_session),
+):
+    user_data = get_user_data(token)
+    return GameController(session).remove_user(room_id, user_data)
+
+
 @router.post("/get_reward/")
 async def get_reward(
     reward: RewardRequest,
