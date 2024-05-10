@@ -199,9 +199,8 @@ class UserController:
 
     def get_nickname(self) -> NickToken:
         now = datetime.utcnow()
-        str_time = now.strftime("%m%d%y%H%M%S")
         uid = id_generator()
-        nickname = f"{uid}_{str_time}"
+        nickname = f"{uid}{now.microsecond}"[:-3]
         token = create_access_token({"username": nickname})
 
         return NickToken(username=nickname, access_token=token)
