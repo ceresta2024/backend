@@ -25,8 +25,12 @@ class BackgroundTasks:
         if datetime.utcnow() > GAME.down_time:
             GAME.reset()
 
+    def reset_weather(self):
+        GAME.set_weather()
+
     def init_schedule_jobs(self):
         schedule.every(1).minutes.do(self.initalize_game_data)
+        schedule.every(10).minutes.do(self.reset_weather)  # for testing.
 
     def run_schedule_jobs(self):
         while True:

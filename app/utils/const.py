@@ -42,3 +42,6 @@ DEFAULT_SPEED = 20
 
 # Score
 SCORES_PER_BOX = [10, 30, 60]
+
+# Weather
+WEATHER = ["Shine", "Fog", "Eclipse", "Rain", "Snow"]  # , "Ice", "Lightning"

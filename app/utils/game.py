@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from random import choice
 
 from app.schemas.game import RewardRequest
 from app.utils import const
@@ -10,6 +11,7 @@ INITIAL_ROOM_COUNT = 12
 class Game:
     def __init__(self):
         self.reset()
+        self.set_weather()
 
     def reset(self):
         self.rooms = {}
@@ -33,8 +35,12 @@ class Game:
         normal_now = now.replace(minute=0, second=0, microsecond=0)
         return normal_now + timedelta(hours=diff_hour)
 
+    def set_weather(self):
+        self.weather = choice(const.WEATHER)
+
     def get_room_list(self):
         if len(self.rooms) < INITIAL_ROOM_COUNT:
+            self.set_weather()
             for _ in range(INITIAL_ROOM_COUNT):
                 room_id = "RM_" + id_generator()
                 map_id = 3
@@ -51,7 +57,7 @@ class Game:
                 }
             self.room_count = INITIAL_ROOM_COUNT
         rooms = [
-            {"room_id": room_id, "map_id": room["map_id"]}
+            {"room_id": room_id, "map_id": room["map_id"], "weather": self.weather}
             for room_id, room in self.rooms.items()
         ]
         return rooms
