@@ -30,7 +30,7 @@ class Game:
     def get_launch_time(self):
         now = datetime.utcnow()
         if settings.ENV == "dev":
-            min = (now.minute // 10) * 10
+            min = ((now.minute // 10) + 1) * 10
             normal_now = now.replace(minute=min, second=0, microsecond=0)
             return normal_now + timedelta(minutes=10)
         else:
