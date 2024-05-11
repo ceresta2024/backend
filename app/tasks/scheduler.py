@@ -25,6 +25,9 @@ class BackgroundTasks:
     def initalize_game_data(self):
         if datetime.utcnow() > GAME.down_time:
             GAME.reset()
+        if settings.ENV == "dev":
+            GAME.launch_time = self.get_launch_time()
+
 
     def reset_weather(self):
         GAME.set_weather()

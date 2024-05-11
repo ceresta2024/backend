@@ -18,7 +18,7 @@ class Game:
         self.rooms = {}
         self.room_count = 0
         self.launch_time = self.get_launch_time()
-        self.down_time = self.launch_time + timedelta(minutes=const.GAME_COUNTDWON_TIME)
+        self.down_time = self.launch_time + timedelta(minutes=const.GAME_COUNTDOWN_TIME)
 
     def is_opened(self):
         return True
@@ -30,7 +30,7 @@ class Game:
     def get_launch_time(self):
         now = datetime.utcnow()
         if settings.ENV == "dev":
-            min = ((now.minute // 10) + 1) * 10
+            min = (now.minute // 10) * 10
             normal_now = now.replace(minute=min, second=0, microsecond=0)
             return normal_now + timedelta(minutes=10)
         else:
