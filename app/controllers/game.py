@@ -22,7 +22,7 @@ class GameController:
         self.session = session
 
     def get_launch_time(self) -> str:
-        return GAME.launch_time.strftime("%Y-%m-%d %H:%M:%S")
+        return GAME.launch_time_s
 
     def is_opened(self) -> dict:
         return {"opened": GAME.is_opened()}

@@ -17,8 +17,7 @@ class Game:
     def reset(self):
         self.rooms = {}
         self.room_count = 0
-        self.launch_time = self.get_launch_time()
-        self.down_time = self.launch_time + timedelta(minutes=const.GAME_COUNTDOWN_TIME)
+        self.set_launch_time()
 
     def is_opened(self):
         return True
@@ -27,19 +26,21 @@ class Game:
             return True
         return False
 
-    def get_launch_time(self):
+    def set_launch_time(self):
         now = datetime.utcnow()
         if settings.ENV == "dev":
             min = (now.minute // 10) * 10
             normal_now = now.replace(minute=min, second=0, microsecond=0)
-            return normal_now + timedelta(minutes=10)
+            self.launch_time = normal_now + timedelta(minutes=10)
         else:
             next_hour = (
                 now.hour // const.GAME_LAUNCH_PERIOD + 1
             ) * const.GAME_LAUNCH_PERIOD
             diff_hour = next_hour - now.hour
             normal_now = now.replace(minute=0, second=0, microsecond=0)
-            return normal_now + timedelta(hours=diff_hour)
+            self.launch_time = normal_now + timedelta(hours=diff_hour)
+        self.down_time = self.launch_time + timedelta(minutes=const.GAME_COUNTDOWN_TIME)
+        self.launch_time_s = self.launch_time.strftime("%Y-%m-%d %H:%M:%S")
 
     def set_weather(self):
         self.weather = choice(const.WEATHER)
@@ -63,7 +64,7 @@ class Game:
                 }
             self.room_count = INITIAL_ROOM_COUNT
         rooms = [
-            {"room_id": room_id, "map_id": room["map_id"], "weather": self.weather}
+            {"room_id": room_id, "map_id": room["map_id"], "weather": self.weather, "start_time": self.launch_time_s}
             for room_id, room in self.rooms.items()
         ]
         return rooms
