@@ -64,7 +64,7 @@ class Game:
                 }
             self.room_count = INITIAL_ROOM_COUNT
         rooms = [
-            {"room_id": room_id, "map_id": room["map_id"], "weather": self.weather, "start_time": self.launch_time_s}
+            {"room_id": room_id, "map_id": room["map_id"], "weather": self.weather}
             for room_id, room in self.rooms.items()
         ]
         return rooms

@@ -33,7 +33,7 @@ class GameController:
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Request"
             )
         rooms = GAME.get_room_list()
-        return {"data": rooms}
+        return {"start_time": self.get_launch_time(), "data": rooms}
 
     def add_room(self, room_name, user_data) -> RoomResponse:
         if not GAME.is_opened():
