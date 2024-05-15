@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy.orm import Session, load_only
 from sqlalchemy.sql import func
 
@@ -21,8 +23,8 @@ class GameController:
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    def get_launch_time(self) -> str:
-        return GAME.launch_time_s
+    def get_launch_time(self) -> dict:
+        return {"start_time": GAME.launch_time_s, "current_time": datetime.utcnow()}
 
     def is_opened(self) -> dict:
         return {"opened": GAME.is_opened()}
@@ -32,8 +34,9 @@ class GameController:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Request"
             )
-        rooms = GAME.get_room_list()
-        return {"start_time": self.get_launch_time(), "data": rooms}
+        res = self.get_launch_time()
+        res["data"] = GAME.get_room_list()
+        return res
 
     def add_room(self, room_name, user_data) -> RoomResponse:
         if not GAME.is_opened():
