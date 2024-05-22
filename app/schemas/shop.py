@@ -14,6 +14,10 @@ class InventoryList(BaseModel):
     item_id: int
     quantity: int
     price: int
+    function: int
+    hp: str
+    sp: str
+    duration: str
 
 
 class RequestBuyItem(BaseModel):
