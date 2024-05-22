@@ -6,7 +6,7 @@ from app.controllers import GameController
 from app.models.base import get_session
 from app.schemas.game import RewardRequest
 
-from app.utils.auth_bearer import JWTBearer
+from app.utils.auth_bearer import JWTBearer, decodeJWT
 from app.utils.common import get_user_data
 
 router = APIRouter()
@@ -69,3 +69,13 @@ async def get_reward(
 ):
     user_data = get_user_data(token)
     return GameController(session).get_reward(reward, user_data)
+
+
+@router.post("/use_item/")
+async def use_item(
+    item_id: int,
+    token=Depends(JWTBearer()),
+    session: Session = Depends(get_session),
+):
+    user_id = decodeJWT(token)["sub"]
+    return GameController(session).use_item(item_id, user_id)

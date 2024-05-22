@@ -35,7 +35,14 @@ class ShopController:
             filter_args.append(Item.name.ilike(f"%{keyword}%"))
         data = (
             self.session.query(
-                Item.name, Inventory.item_id, Inventory.quantity, Shop.price, Item.function, Item.hp, Item.sp, Item.duration
+                Item.name,
+                Inventory.item_id,
+                Inventory.quantity,
+                Shop.price,
+                Item.function,
+                Item.hp,
+                Item.sp,
+                Item.duration,
             )
             .join(Inventory, Inventory.item_id == Item.id)
             .join(Shop, Shop.item_id == Item.id)

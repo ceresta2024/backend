@@ -252,3 +252,18 @@ class GameController:
             item_price=item.price,
             gold=REWARD_GOLD,
         )
+
+    def use_item(self, item_id: int, user_id: int):
+        user = self.session.query(User).filter(User.id == user_id).first()
+        if user is None:
+            return {"status": "guest user"}
+        inven = (
+            self.session.query(Inventory)
+            .filter_by(user_id=user_id, item_id=item_id)
+            .first()
+        )
+        if inven and inven.quantity > 0:
+            inven.quantity -= 1
+            self.session.commit()
+            return {"status": "ok"}
+        return {"status": "no item"}
