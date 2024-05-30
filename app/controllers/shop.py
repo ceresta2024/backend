@@ -93,7 +93,7 @@ class ShopController:
             )
             self.session.add(inven)
         self.session.commit()
-        return {"message": "finished successfully"}
+        return {"message": "finished successfully", "gold": user.game_money}
 
     def sell_item(self, request: RequestSellItem, user_id: int):
         inven = (
@@ -130,4 +130,4 @@ class ShopController:
         user.game_money += price
         inven.quantity -= request.quantity
         self.session.commit()
-        return {"message": "finished successfully"}
+        return {"message": "finished successfully", "gold": user.game_money}
