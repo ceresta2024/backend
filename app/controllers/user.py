@@ -15,6 +15,7 @@ from app.schemas.user import (
     SetJob,
     ItemList,
     JobList,
+    RankingList,
 )
 from app.utils.common import (
     id_generator,
@@ -229,6 +230,15 @@ class UserController:
             "score": user.score,
         }
 
+    def get_rankings(self):
+        rows = (
+            self.session.query(User.user_name, User.job_id, User.score)
+            .order_by(User.score.desc())
+            .limit(50)
+        )
+        rankings = get_list_of_dict(RankingList.__fields__.keys(), rows)
+        return {"data": rankings}
+
     def get_jobs(self):
         rows = (
             self.session.query(
@@ -309,7 +319,9 @@ class UserController:
     def get_notice(self):
         return (
             self.session.query(Notice)
-            .options(load_only(Notice.name, Notice.contents, Notice.type, Notice.created))
+            .options(
+                load_only(Notice.name, Notice.contents, Notice.type, Notice.created)
+            )
             .filter(Notice.is_available == 1)
             .all()
         )

@@ -167,6 +167,13 @@ async def get_score(
     return UserController(session).get_score(user_id)
 
 
+@router.get("/get_rankings")
+async def get_rankings(
+    token=Depends(JWTBearer()), session: Session = Depends(get_session)
+):
+    return UserController(session).get_rankings()
+
+
 ### Job apis
 @router.get("/get_jobs/")
 async def get_jobs(token=Depends(JWTBearer()), session: Session = Depends(get_session)):

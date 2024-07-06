@@ -87,3 +87,9 @@ class JobList(BaseModel):
     speed: int
     allow_gold: int
     items: list[ItemList]
+
+
+class RankingList(BaseModel):
+    name: str
+    job_id: int
+    score: int
