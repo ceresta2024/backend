@@ -17,6 +17,7 @@ from app.schemas.user import (
     JobList,
     RankingList,
 )
+from app.utils import JOBS
 from app.utils.common import (
     id_generator,
     create_access_token,
@@ -237,6 +238,8 @@ class UserController:
             .limit(50)
         )
         rankings = get_list_of_dict(RankingList.__fields__.keys(), rows)
+        for ranking in rankings:
+            ranking["job"] = JOBS["ID_TO_NAME"].get(ranking["job"], "")
         return {"data": rankings}
 
     def get_jobs(self):

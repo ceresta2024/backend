@@ -91,5 +91,5 @@ class JobList(BaseModel):
 
 class RankingList(BaseModel):
     name: str
-    job_id: int
+    job: int
     score: int
