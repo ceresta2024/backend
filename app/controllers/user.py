@@ -309,7 +309,7 @@ class UserController:
     def get_notice(self):
         return (
             self.session.query(Notice)
-            .options(load_only(Notice.contents, Notice.type))
+            .options(load_only(Notice.name, Notice.contents, Notice.type, Notice.created))
             .filter(Notice.is_available == 1)
             .all()
         )
