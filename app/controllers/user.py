@@ -323,7 +323,9 @@ class UserController:
         return (
             self.session.query(Notice)
             .options(
-                load_only(Notice.name, Notice.contents, Notice.type, Notice.created)
+                load_only(
+                    Notice.name, Notice.contents, Notice.start_date, Notice.end_date
+                )
             )
             .filter(Notice.is_available == 1)
             .all()
